@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reel Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=Anek+Telugu:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lime: #D4FF33; --black: #000; --white: #fff; --carbon: #111; --graphite: #222; --smoke: #888;
+    --display: 'Plus Jakarta Sans', 'Anek Telugu', system-ui, sans-serif;
+    --body: 'Inter', 'Anek Telugu', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--black); color: var(--white); font-family: var(--body); font-size: 15px; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  .app { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
+  aside { border-right: 1px solid var(--graphite); padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  main { padding: 28px 40px 80px; min-width: 0; }
+  .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--lime); }
+  .rule { height: 2px; background: var(--lime); width: 64px; margin-top: 10px; }
+  h1 { font-family: var(--display); font-weight: 800; font-size: 28px; letter-spacing: -.03em; margin: 8px 0 0; }
+  h2 { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -.02em; margin: 0; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 16px; margin: 0 0 12px; }
+  .muted { color: var(--smoke); }
+  .card { background: var(--carbon); border: 1px solid var(--graphite); border-radius: 12px; padding: 20px; }
+  .drop { border: 1.5px dashed #333; border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; }
+  .drop.over, .drop:hover { border-color: var(--lime); background: #0a0a0a; }
+  .drop svg { stroke: var(--white); }
+  .drop.over svg { stroke: var(--lime); }
+  .drop b { display: block; font-family: var(--display); font-weight: 700; font-size: 17px; margin: 10px 0 4px; }
+  label.field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 500; color: var(--smoke); letter-spacing: .06em; text-transform: uppercase; }
+  textarea, select, input[type=text] { background: var(--carbon); border: 1px solid var(--graphite); border-radius: 8px; padding: 10px 12px; text-transform: none; letter-spacing: 0; font-size: 14px; }
+  textarea:focus, select:focus, input[type=text]:focus, button:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .toggle { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--white); cursor: pointer; }
+  .toggle input { accent-color: var(--lime); width: 16px; height: 16px; }
+  .btn { border: 1px solid var(--graphite); background: var(--carbon); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: 600; font-size: 14px; transition: opacity 150ms ease, transform 150ms ease; }
+  .btn:hover { opacity: .85; } .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn.primary { background: var(--lime); color: var(--black); border-color: var(--lime); }
+  .btn.ghost { background: transparent; }
+  .jobs { display: flex; flex-direction: column; gap: 6px; }
+  .job { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; }
+  .job:hover { background: var(--carbon); }
+  .job.sel { background: var(--carbon); border-color: var(--graphite); }
+  .job .n { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .job .s { font-size: 12px; color: var(--smoke); display: flex; gap: 6px; align-items: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--smoke); flex: none; }
+  .dot.live { background: var(--lime); animation: pulse 1.2s ease-in-out infinite; }
+  .dot.ok { background: var(--lime); } .dot.err { background: #ff5c5c; }
+  @keyframes pulse { 50% { opacity: .3; } }
+  .progress { height: 4px; background: var(--graphite); border-radius: 999px; overflow: hidden; }
+  .progress > i { display: block; height: 100%; background: var(--lime); width: 0; transition: width 150ms ease; }
+  .stages { display: flex; gap: 6px; margin: 18px 0 26px; flex-wrap: wrap; }
+  .stage { flex: 1; min-width: 90px; }
+  .stage .bar { height: 3px; background: var(--graphite); border-radius: 999px; }
+  .stage.done .bar { background: var(--white); } .stage.now .bar { background: var(--lime); }
+  .stage span { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+  .stage.now span { color: var(--lime); } .stage.done span { color: var(--white); }
+  .activity { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+  .frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .frame { background: var(--carbon); border: 1px solid var(--graphite); border-radius: 12px; overflow: hidden; }
+  .frame img { width: 100%; display: block; aspect-ratio: 9/16; object-fit: cover; background: #050505; }
+  .frame .cap { padding: 10px 12px; font-size: 12px; line-height: 1.4; }
+  .frame .cap b { color: var(--lime); font-weight: 600; letter-spacing: .1em; font-size: 10px; display: block; margin-bottom: 4px; }
+  .hook { font-family: var(--display); font-weight: 800; font-size: 26px; letter-spacing: -.03em; line-height: 1.15; }
+  .warn { border-left: 2px solid var(--lime); padding: 8px 12px; background: #0a0a0a; font-size: 13px; border-radius: 0 8px 8px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--graphite); border-radius: 999px; padding: 6px 12px; font-size: 12px; cursor: pointer; background: transparent; }
+  .chip:hover { border-color: var(--lime); color: var(--lime); }
+  video { width: 100%; border-radius: 12px; background: #050505; display: block; aspect-ratio: 9/16; }
+  .md { font-size: 14px; line-height: 1.6; color: #ddd; overflow-x: auto; }
+  .md h1, .md h2 { font-size: 18px; margin: 18px 0 8px; } .md h3 { font-size: 15px; margin: 16px 0 6px; }
+  .md table { border-collapse: collapse; width: 100%; font-size: 12px; margin: 10px 0; }
+  .md td, .md th { border: 1px solid var(--graphite); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .md th { color: var(--smoke); font-weight: 500; }
+  details > summary { cursor: pointer; font-family: var(--display); font-weight: 600; list-style: none; display: flex; justify-content: space-between; }
+  details > summary::after { content: '+'; color: var(--smoke); } details[open] > summary::after { content: '–'; }
+  pre.log { font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--smoke); white-space: pre-wrap; max-height: 260px; overflow: auto; margin: 12px 0 0; }
+  .caption { white-space: pre-wrap; font-size: 14px; line-height: 1.55; max-height: 320px; overflow: auto; }
+  .empty { display: grid; place-items: center; min-height: 70vh; text-align: center; }
+  .empty .big { font-family: var(--display); font-weight: 800; font-size: 44px; letter-spacing: -.04em; line-height: 1.05; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .spin { width: 14px; height: 14px; border: 2px solid var(--graphite); border-top-color: var(--lime); border-radius: 50%; animation: s 0.8s linear infinite; flex: none; }
+  @keyframes s { to { transform: rotate(360deg); } }
+  .versions a { color: var(--white); font-size: 13px; }
+  .versions a.cur { color: var(--lime); }
+  body.dragging::after { content: 'Drop to upload'; position: fixed; inset: 12px; border: 2px dashed var(--lime); border-radius: 16px; background: rgba(0,0,0,0.82);
+    display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 40px; color: var(--lime); z-index: 8; pointer-events: none; }
+  @media (max-width: 1100px) { .grid2 { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; } aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--graphite); }
+    main { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div>
+      <div class="eyebrow">Digital Entrepreneur</div>
+      <div class="rule"></div>
+      <h1>Reel Studio</h1>
+      <div class="muted" style="font-size:13px;margin-top:6px">Drop a raw take. Get a finished reel.</div>
+    </div>
+
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload a raw video">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+      <b>Drop raw video</b>
+      <span class="muted" style="font-size:12px">MP4 · MOV · or click to choose</span>
+      <input type="file" id="file" accept="video/*,.mov,.mp4,.m4v,.webm" hidden>
+    </div>
+    <div id="uploading" hidden>
+      <div class="row" style="justify-content:space-between;font-size:12px;margin-bottom:6px"><span id="upname" class="muted"></span><span id="uppct">0%</span></div>
+      <div class="progress"><i id="upbar"></i></div>
+    </div>
+
+    <label class="field">Notes for Claude (optional)
+      <textarea id="notes" rows="3" placeholder="e.g. Hook on the salary line. Keep it under 30s."></textarea>
+    </label>
+    <div class="row">
+      <label class="field" style="flex:1">Language
+        <select id="lang"><option value="auto">Auto-detect</option><option value="te">Telugu</option><option value="en">English</option><option value="hi">Hindi</option></select>
+      </label>
+    </div>
+    <label class="field">Quality
+      <select id="mode"><option value="qa">Standard: quality check (+~5 min)</option><option value="fast">Fast: skip quality check</option></select>
+    </label>
+    <label class="toggle"><input type="checkbox" id="auto" checked> Render automatically (video ready when you review)</label>
+
+    <div>
+      <div class="eyebrow" style="color:var(--smoke);margin-bottom:10px">Reels</div>
+      <div class="jobs" id="jobs"></div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="empty"><div>
+      <div class="eyebrow">How it works</div>
+      <div class="big" style="margin-top:14px">Drop. Review.<br><span style="color:var(--lime)">Render.</span></div>
+      <p class="muted" style="max-width:440px;margin:18px auto 0;line-height:1.6">Claude transcribes your take, writes the brief and hook, cuts the pauses, adds b-roll and brand graphics, then shows you the storyboard. Nothing renders until you say so.</p>
+    </div></div>
+  </main>
+</div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+let selected = null, current = null, jobsCache = [];
+try { selected = localStorage.getItem('reel.sel'); } catch {}
+
+const STAGES = [['queued', 'Upload'], ['transcribing', 'Transcribe'], ['planning', 'Plan'], ['review', 'Review'], ['rendering', 'Render'], ['done', 'Done']];
+const LIVE = new Set(['queued', 'transcribing', 'planning', 'rendering']);
+
+// ---------- upload
+const drop = $('#drop'), fileIn = $('#file');
+drop.onclick = () => fileIn.click();
+drop.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') fileIn.click(); };
+fileIn.onchange = () => fileIn.files[0] && upload(fileIn.files[0]);
+['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) upload(f); });
+let dragDepth = 0;
+document.addEventListener('dragenter', (e) => { e.preventDefault(); if (++dragDepth === 1) document.body.classList.add('dragging'); });
+document.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove('dragging'); } });
+document.addEventListener('dragover', (e) => e.preventDefault());
+document.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; document.body.classList.remove('dragging'); const f = e.dataTransfer.files[0]; if (f && !drop.contains(e.target)) upload(f); });
+
+let uploadingNow = false;
+function upload(file) {
+  if (uploadingNow) return; // ignore a second drop while one is still uploading
+  if (!/\.(mp4|mov|m4v|webm)$/i.test(file.name)) { alert('Drop an .mp4, .mov, .m4v or .webm video'); return; }
+  uploadingNow = true; selected = null;
+  const q = new URLSearchParams({name: file.name, notes: $('#notes').value, lang: $('#lang').value, auto: $('#auto').checked ? '1' : '0', fast: $('#mode').value === 'fast' ? '1' : '0'});
+  const xhr = new XMLHttpRequest();
+  $('#main').innerHTML = `<div class="empty"><div class="card stack" style="width:min(520px,90vw);text-align:left">
+    <div class="eyebrow">Uploading</div><h2 style="word-break:break-all">${esc(file.name)}</h2>
+    <div class="progress" style="height:8px"><i id="bigbar"></i></div>
+    <div class="row" style="justify-content:space-between"><span class="muted" id="bigtxt">Starting…</span><span id="bigpct">0%</span></div></div></div>`;
+  xhr.upload.onprogress = (e) => {
+    const p = Math.round(100 * e.loaded / e.total);
+    $('#bigbar') && ($('#bigbar').style.width = p + '%'); $('#bigpct') && ($('#bigpct').textContent = p + '%');
+    $('#bigtxt') && ($('#bigtxt').textContent = `${(e.loaded / 1e6).toFixed(1)} of ${(e.total / 1e6).toFixed(1)} MB`);
+  };
+  xhr.onload = () => {
+    uploadingNow = false; fileIn.value = '';
+    const r = JSON.parse(xhr.responseText || '{}');
+    if (r.slug) {
+      $('#notes').value = '';
+      if (r.duplicate) flash('You already uploaded this video — opened the existing reel instead of starting a new one.');
+      select(r.slug); refreshJobs();
+    } else { alert(r.error || 'Upload failed'); }
+  };
+  xhr.onerror = () => { uploadingNow = false; alert('Upload failed — is the app server running? (double-click Reel Studio.command)'); };
+  xhr.open('PUT', '/api/upload?' + q); xhr.send(file);
+}
+
+// ---------- jobs list
+async function refreshJobs() {
+  try { jobsCache = await (await fetch('/api/jobs')).json(); } catch { return; }
+  $('#jobs').innerHTML = jobsCache.length ? jobsCache.map((j) => `
+    <div class="job ${j.slug === selected ? 'sel' : ''}" data-slug="${esc(j.slug)}">
+      <div class="n">${esc(j.name || j.slug)}</div>
+      <div class="s"><span class="dot ${LIVE.has(j.status) ? 'live' : j.status === 'done' ? 'ok' : j.status === 'error' ? 'err' : ''}"></span>${esc(j.activity || j.status)}</div>
+    </div>`).join('') : '<div class="muted" style="font-size:13px">No reels yet.</div>';
+  document.querySelectorAll('.job').forEach((el) => (el.onclick = () => select(el.dataset.slug)));
+}
+
+function flash(msg) {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--carbon);border:1px solid var(--lime);color:#fff;padding:12px 18px;border-radius:8px;z-index:9;font-size:14px;max-width:90vw';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 6000);
+}
+
+function select(slug) {
+  selected = slug; current = null;
+  try { localStorage.setItem('reel.sel', slug); } catch {}
+  refreshJobs(); refreshJob(true);
+}
+
+// ---------- tiny markdown (headings, bold, lists, tables)
+function md(src) {
+  if (!src) return '';
+  const lines = src.split('\n'); let out = '', i = 0;
+  const inline = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`(.+?)`/g, '<code>$1</code>').replace(/_(.+?)_/g, '<i>$1</i>');
+  while (i < lines.length) {
+    const l = lines[i];
+    if (/^\|/.test(l)) {
+      const rows = []; while (i < lines.length && /^\|/.test(lines[i])) rows.push(lines[i++]);
+      const cells = (r) => r.replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
+      out += '<table><tr>' + cells(rows[0]).map((c) => `<th>${inline(c)}</th>`).join('') + '</tr>' +
+        rows.slice(2).map((r) => '<tr>' + cells(r).map((c) => `<td>${inline(c)}</td>`).join('') + '</tr>').join('') + '</table>';
+      continue;
+    }
+    const h = l.match(/^(#{1,3}) (.*)/);
+    if (h) out += `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`;
+    else if (/^\s*[-*] /.test(l)) out += `<div>• ${inline(l.replace(/^\s*[-*] /, ''))}</div>`;
+    else if (l.trim()) out += `<p style="margin:6px 0">${inline(l)}</p>`;
+    i++;
+  }
+  return out;
+}
+
+// ---------- job view
+let lastRenderKey = '';
+async function refreshJob(force) {
+  if (!selected) return;
+  const want = selected;
+  let j; try { const r = await fetch('/api/jobs/' + encodeURIComponent(want)); if (!r.ok) return; j = await r.json(); } catch { return; }
+  if (want !== selected) return; // a newer selection superseded this response
+  const key = JSON.stringify([j.status, j.activity, j.framesVersion, j.latest, (j.revisions || []).length, j.caption, j.brief, (j.log || []).length, j.qa, j.clips]);
+  current = j;
+  if (!force && key === lastRenderKey) return;
+  lastRenderKey = key;
+  renderJob(j);
+}
+
+function stageIndex(s) { const i = STAGES.findIndex(([k]) => k === s); return i < 0 ? (s === 'error' ? -1 : 0) : i; }
+
+function renderJob(j) {
+  const draftText = $('#revise') ? $('#revise').value : '';
+  const typing = document.activeElement && document.activeElement.id === 'revise';
+  const si = stageIndex(j.status), live = LIVE.has(j.status);
+  const canAct = j.status === 'review' || j.status === 'done';
+  const v = Date.now();
+  const frames = (j.frames || []).map((f) => `
+    <div class="frame"><img src="/files/${encodeURIComponent(j.slug)}/${f.frame}?v=${j.framesVersion}" alt="Beat ${f.id}">
+      <div class="cap"><b>BEAT ${f.id} · ${f.t}s</b>${esc(f.spoken)}</div></div>`).join('');
+  const outs = (j.outputs || []).slice().reverse();
+  const video = j.latest ? `
+    <div class="card stack">
+      <h3 style="margin:0">Your reel</h3>
+      <video controls playsinline src="/files/${encodeURIComponent(j.slug)}/${j.latest}?v=${encodeURIComponent(j.latest)}"></video>
+      <div class="row" style="justify-content:space-between">
+        <a class="btn primary" href="/files/${encodeURIComponent(j.slug)}/${j.latest}?download=1" download>Download MP4</a>
+        <div class="versions">${outs.map((o) => `<a class="${o === j.latest ? 'cur' : ''}" href="/files/${encodeURIComponent(j.slug)}/${o}" target="_blank">${esc(o.split('/').pop().replace(j.slug + '_', ''))}</a>`).join(' · ')}</div>
+      </div>
+    </div>` : '';
+  const caption = j.caption ? `
+    <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h3 style="margin:0">Instagram caption</h3>
+      <button class="btn ghost" id="copycap" style="padding:6px 12px;font-size:12px">Copy</button></div>
+      <div class="caption">${esc(j.caption)}</div></div>` : '';
+  const revs = (j.revisions || []).map((r) => `<div class="warn"><b>“${esc(r.text)}”</b><br><span class="muted">${esc(r.summary || '')}</span></div>`).join('');
+
+  $('#main').innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:20px">
+      <div><div class="eyebrow">Reel</div><h2 style="margin-top:6px">${esc(j.name || j.slug)}</h2>
+        <div class="activity muted" style="margin-top:10px">${live ? '<span class="spin"></span>' : ''}<span>${esc(j.activity || j.status)}${j.status === 'queued' && j.ahead ? ` · ${j.ahead} reel${j.ahead > 1 ? 's' : ''} ahead of you` : ''}</span>
+        ${j.status === 'rendering' && j.renderStarted ? `<span id="elapsed" data-t="${j.renderStarted}"></span>` : ''}</div></div>
+      <div class="row">${j.cost ? `<span class="muted" style="font-size:12px">Claude: $${j.cost}</span>` : ''}${live ? `<button class="btn ghost" id="cancel" style="padding:6px 12px;font-size:12px">Cancel</button>` : ''}</div>
+    </div>
+    <div class="stages">${STAGES.map(([k, label], i) => `<div class="stage ${i < si || j.status === 'done' ? 'done' : i === si ? 'now' : ''}"><div class="bar"></div><span>${label}</span></div>`).join('')}</div>
+    ${j.status === 'error' ? `<div class="card" style="border-color:#5c2020;margin-bottom:20px"><h3>${j.activity === 'Cancelled' ? 'Cancelled' : 'Something went wrong'}</h3><pre class="log">${esc(j.error || '')}</pre>
+      <div class="row" style="margin-top:12px"><button class="btn" id="replan">${j.activity === 'Cancelled' ? 'Start planning again' : 'Try planning again'}</button></div></div>` : ''}
+
+    <div class="grid2">
+      <div class="stack">
+        ${j.plan ? `<div class="card stack">
+          <div class="eyebrow">Hook</div>
+          <div class="hook">${esc(j.plan.hook || '')}</div>
+          <div class="muted" style="line-height:1.55">${esc(j.plan.summary || '')}</div>
+          ${j.plan.check ? `<div class="warn"><b>Check before posting:</b> ${esc(j.plan.check)}</div>` : ''}
+        </div>` : ''}
+        ${j.qa ? `<div class="card stack">
+          <div class="row" style="justify-content:space-between"><h3 style="margin:0">Quality check</h3>
+            <span class="muted" style="font-size:12px">${j.qa.frames ?? '–'} frames · round ${j.qa.round ?? '–'}</span></div>
+          <div class="row" style="gap:28px">
+            <div><div class="hook" style="color:${j.qa.hard ? '#ff5c5c' : 'var(--lime)'}">${j.qa.hard ?? '–'}</div><div class="muted" style="font-size:12px">measured failures</div></div>
+            <div><div class="hook" style="color:${(j.qa.min ?? 10) < 8 ? '#ff5c5c' : 'var(--lime)'}">${j.qa.min ?? '–'}<span class="muted" style="font-size:16px">/10</span></div><div class="muted" style="font-size:12px">lowest frame</div></div>
+            <div><div class="hook">${j.qa.mean ?? '–'}</div><div class="muted" style="font-size:12px">average</div></div>
+          </div>
+          ${(j.qa.failures || []).map((f) => `<div class="warn">${esc(f.t)}s — ${esc(f.issue)}</div>`).join('')}
+          ${(j.qa.low || []).map((f) => `<div class="warn">Frame ${esc(f.i)} · ${esc(f.score)}/10 — ${esc(f.issue || '')}</div>`).join('')}
+        </div>` : ''}
+        ${frames ? `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:14px"><h3 style="margin:0">Storyboard</h3><span class="muted" style="font-size:12px">${(j.frames || []).length} beats</span></div><div class="frames">${frames}</div></div>`
+          : live ? `<div class="card"><h3>Storyboard</h3><div class="muted">Claude is working on it — frames appear here when the plan is ready.</div></div>` : ''}
+        ${j.brief ? `<details class="card"><summary>Brief</summary><div class="md">${md(j.brief)}</div></details>` : ''}
+        ${j.storyboard ? `<details class="card"><summary>Beat sheet &amp; retention check</summary><div class="md">${md(j.storyboard)}</div></details>` : ''}
+        <details class="card"><summary>Activity log</summary><pre class="log">${esc((j.log || []).join('\n'))}</pre></details>
+      </div>
+
+      <div class="stack">
+        ${video}
+        <div class="card stack">
+          <div class="row" style="justify-content:space-between"><h3 style="margin:0">B-roll clips</h3><span class="muted" style="font-size:12px">Flow · Veo · your footage</span></div>
+          <div class="drop" id="clipdrop" style="padding:16px" tabindex="0" role="button" aria-label="Add a b-roll clip">
+            <b style="font-size:14px;margin:0">Drop clips here</b><span class="muted" style="font-size:12px">or click · added before planning = used automatically</span>
+            <input type="file" id="clipfile" accept="video/*,image/*" multiple hidden>
+          </div>
+          <input type="text" id="clipnote" placeholder="Note for Claude, e.g. use when I say EMI">
+          ${(j.clips || []).map((c) => `<div class="row" style="justify-content:space-between;font-size:13px"><span>${esc(c.name)}${c.note ? ` <span class="muted">— ${esc(c.note)}</span>` : ''}</span><span class="muted" style="font-size:11px">${c.used ? 'in edit' : 'new'}</span></div>`).join('')}
+          ${(j.clips || []).some((c) => !c.used) && j.session ? `<button class="btn primary" id="useclips" ${canAct ? '' : 'disabled'}>Re-edit with new clips</button>` : ''}
+        </div>
+        ${j.session ? `<div class="card stack">
+          <h3 style="margin:0">Change something</h3>
+          <div class="chips">${['Stronger hook', 'Tighter cut', 'Bigger captions', 'More b-roll', 'Fewer graphics', 'Calmer pace'].map((c) => `<button class="chip" data-chip="${c}">${c}</button>`).join('')}</div>
+          <textarea id="revise" rows="3" placeholder="e.g. Fix beat 6 caption to “EMI పెట్టి ఇల్లు కొను”"></textarea>
+          ${revs}
+          <div class="row"><button class="btn" id="sendrev" ${canAct ? '' : 'disabled'}>Apply change</button></div>
+        </div>` : ''}
+        ${j.frames && j.frames.length ? `<div class="card stack">
+          <h3 style="margin:0">Render</h3>
+          <div class="muted" style="font-size:13px">Final ≈ 5–8 min for a 45s reel. Draft is half-res, ~3× faster.</div>
+          <div class="row"><button class="btn primary" id="render" ${canAct ? '' : 'disabled'}>Render final</button><button class="btn" id="draft" ${canAct ? '' : 'disabled'}>Draft</button></div>
+        </div>` : ''}
+        ${caption}
+      </div>
+    </div>`;
+
+  if ($('#revise') && draftText) { $('#revise').value = draftText; if (typing) $('#revise').focus(); }
+  const post = (a, body) => fetch(`/api/jobs/${encodeURIComponent(j.slug)}/${a}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})}).then(() => { refreshJob(true); refreshJobs(); });
+  $('#render') && ($('#render').onclick = () => post('render', {draft: false}));
+  $('#draft') && ($('#draft').onclick = () => post('render', {draft: true}));
+  $('#replan') && ($('#replan').onclick = () => post('replan'));
+  const clipDrop = $('#clipdrop'), clipFile = $('#clipfile');
+  const sendClips = async (files) => {
+    for (const f of files) {
+      clipDrop.querySelector('b').textContent = `Adding ${f.name}…`;
+      const q = new URLSearchParams({name: f.name, note: $('#clipnote').value});
+      const r = await fetch(`/api/jobs/${encodeURIComponent(j.slug)}/media?${q}`, {method: 'PUT', body: f}).then((x) => x.json()).catch(() => ({error: 'upload failed'}));
+      if (r.error) alert(r.error);
+    }
+    $('#clipnote').value = ''; lastRenderKey = ''; refreshJob(true);
+  };
+  if (clipDrop) {
+    clipDrop.onclick = () => clipFile.click();
+    clipFile.onchange = () => clipFile.files.length && sendClips([...clipFile.files]);
+    ['dragenter', 'dragover'].forEach((ev) => clipDrop.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); clipDrop.classList.add('over'); }));
+    clipDrop.addEventListener('dragleave', () => clipDrop.classList.remove('over'));
+    clipDrop.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dragDepth = 0; document.body.classList.remove('dragging'); clipDrop.classList.remove('over'); sendClips([...e.dataTransfer.files]); });
+  }
+  $('#useclips') && ($('#useclips').onclick = () => post('use-clips'));
+  $('#cancel') && ($('#cancel').onclick = () => { if (confirm('Cancel this reel? Work done so far is kept.')) post('cancel'); });
+  $('#sendrev') && ($('#sendrev').onclick = () => { const t = $('#revise').value.trim(); if (t) post('revise', {text: t}); });
+  document.querySelectorAll('[data-chip]').forEach((b) => (b.onclick = () => { $('#revise').value = b.dataset.chip; $('#revise').focus(); }));
+  $('#copycap') && ($('#copycap').onclick = async () => { try { await navigator.clipboard.writeText(j.caption); $('#copycap').textContent = 'Copied'; } catch { $('#copycap').textContent = 'Select & copy'; } });
+}
+
+setInterval(() => { const e = $('#elapsed'); if (e) { const s = Math.round(Date.now() / 1000 - Number(e.dataset.t)); e.textContent = `· ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; } }, 1000);
+setInterval(refreshJobs, 3000);
+setInterval(() => refreshJob(false), 1500);
+refreshJobs(); if (selected) refreshJob(true);
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# secrets and local settings
+.env
+**/.streamlit/secrets.toml
+.claude/settings.local.json
+
+# data and media (large or personal; not source)
+constituency_dashboard/data/*.db
+*.mp4
+*.mov
+*.wav
+*.mp3
+**/.hyperframes/
+bakeoff/**/node_modules/
+
+.DS_Store
+__pycache__/

@@ -1,0 +1,746 @@
+[
+  {
+    "text": "My",
+    "start": 0.02,
+    "end": 0.22,
+    "id": "w0"
+  },
+  {
+    "text": "ambition",
+    "start": 0.69,
+    "end": 1.1,
+    "id": "w1"
+  },
+  {
+    "text": "is",
+    "start": 1.1,
+    "end": 1.32,
+    "id": "w2"
+  },
+  {
+    "text": "salary-matching.",
+    "start": 1.32,
+    "end": 4,
+    "id": "w3"
+  },
+  {
+    "text": "Every",
+    "start": 4.02,
+    "end": 4.31,
+    "id": "w4"
+  },
+  {
+    "text": "month,",
+    "start": 4.62,
+    "end": 4.74,
+    "id": "w5"
+  },
+  {
+    "text": "salary",
+    "start": 4.74,
+    "end": 5.11,
+    "id": "w6"
+  },
+  {
+    "text": "credit",
+    "start": 5.11,
+    "end": 5.45,
+    "id": "w7"
+  },
+  {
+    "text": "is",
+    "start": 5.52,
+    "end": 5.6,
+    "id": "w8"
+  },
+  {
+    "text": "out.",
+    "start": 5.6,
+    "end": 6,
+    "id": "w9"
+  },
+  {
+    "text": "Every",
+    "start": 6.69,
+    "end": 6.9,
+    "id": "w10"
+  },
+  {
+    "text": "year,",
+    "start": 6.9,
+    "end": 8,
+    "id": "w11"
+  },
+  {
+    "text": "my",
+    "start": 8,
+    "end": 8.09,
+    "id": "w12"
+  },
+  {
+    "text": "appraisal",
+    "start": 8.09,
+    "end": 8.43,
+    "id": "w13"
+  },
+  {
+    "text": "costs",
+    "start": 8.51,
+    "end": 8.69,
+    "id": "w14"
+  },
+  {
+    "text": "are",
+    "start": 8.74,
+    "end": 8.88,
+    "id": "w15"
+  },
+  {
+    "text": "up.",
+    "start": 8.88,
+    "end": 9,
+    "id": "w16"
+  },
+  {
+    "text": "But",
+    "start": 9.02,
+    "end": 9.39,
+    "id": "w17"
+  },
+  {
+    "text": "my",
+    "start": 9.39,
+    "end": 9.7,
+    "id": "w18"
+  },
+  {
+    "text": "ambition",
+    "start": 9.7,
+    "end": 10.69,
+    "id": "w19"
+  },
+  {
+    "text": "is",
+    "start": 10.69,
+    "end": 10.95,
+    "id": "w20"
+  },
+  {
+    "text": "the",
+    "start": 10.95,
+    "end": 11.34,
+    "id": "w21"
+  },
+  {
+    "text": "limit",
+    "start": 11.34,
+    "end": 12,
+    "id": "w22"
+  },
+  {
+    "text": "of",
+    "start": 12,
+    "end": 12.05,
+    "id": "w23"
+  },
+  {
+    "text": "my",
+    "start": 12.18,
+    "end": 12.35,
+    "id": "w24"
+  },
+  {
+    "text": "life.",
+    "start": 12.35,
+    "end": 13,
+    "id": "w25"
+  },
+  {
+    "text": "My",
+    "start": 13.02,
+    "end": 13.24,
+    "id": "w26"
+  },
+  {
+    "text": "job",
+    "start": 13.24,
+    "end": 13.48,
+    "id": "w27"
+  },
+  {
+    "text": "is",
+    "start": 13.7,
+    "end": 13.84,
+    "id": "w28"
+  },
+  {
+    "text": "out,",
+    "start": 13.84,
+    "end": 14.43,
+    "id": "w29"
+  },
+  {
+    "text": "my",
+    "start": 14.43,
+    "end": 14.67,
+    "id": "w30"
+  },
+  {
+    "text": "salary",
+    "start": 14.67,
+    "end": 15.38,
+    "id": "w31"
+  },
+  {
+    "text": "is",
+    "start": 15.38,
+    "end": 15.62,
+    "id": "w32"
+  },
+  {
+    "text": "out.",
+    "start": 15.62,
+    "end": 16,
+    "id": "w33"
+  },
+  {
+    "text": "My",
+    "start": 16.02,
+    "end": 16.28,
+    "id": "w34"
+  },
+  {
+    "text": "life",
+    "start": 16.69,
+    "end": 16.85,
+    "id": "w35"
+  },
+  {
+    "text": "is",
+    "start": 16.85,
+    "end": 17.13,
+    "id": "w36"
+  },
+  {
+    "text": "stable.",
+    "start": 17.13,
+    "end": 18,
+    "id": "w37"
+  },
+  {
+    "text": "But",
+    "start": 18.05,
+    "end": 18.51,
+    "id": "w38"
+  },
+  {
+    "text": "I",
+    "start": 18.7,
+    "end": 18.8,
+    "id": "w39"
+  },
+  {
+    "text": "am",
+    "start": 18.8,
+    "end": 19.2,
+    "id": "w40"
+  },
+  {
+    "text": "honest.",
+    "start": 19.2,
+    "end": 21,
+    "id": "w41"
+  },
+  {
+    "text": "My",
+    "start": 21.02,
+    "end": 21.28,
+    "id": "w42"
+  },
+  {
+    "text": "goals,",
+    "start": 21.69,
+    "end": 22.23,
+    "id": "w43"
+  },
+  {
+    "text": "my",
+    "start": 22.23,
+    "end": 22.45,
+    "id": "w44"
+  },
+  {
+    "text": "family",
+    "start": 22.52,
+    "end": 23.23,
+    "id": "w45"
+  },
+  {
+    "text": "dreams,",
+    "start": 23.23,
+    "end": 24,
+    "id": "w46"
+  },
+  {
+    "text": "my",
+    "start": 24.02,
+    "end": 24.15,
+    "id": "w47"
+  },
+  {
+    "text": "lifestyle",
+    "start": 24.69,
+    "end": 24.87,
+    "id": "w48"
+  },
+  {
+    "text": "expectations,",
+    "start": 24.87,
+    "end": 26,
+    "id": "w49"
+  },
+  {
+    "text": "my",
+    "start": 26,
+    "end": 26.14,
+    "id": "w50"
+  },
+  {
+    "text": "freedom",
+    "start": 26.14,
+    "end": 26.63,
+    "id": "w51"
+  },
+  {
+    "text": "plans.",
+    "start": 26.63,
+    "end": 27,
+    "id": "w52"
+  },
+  {
+    "text": "I",
+    "start": 27.02,
+    "end": 27.09,
+    "id": "w53"
+  },
+  {
+    "text": "have",
+    "start": 27.09,
+    "end": 27.45,
+    "id": "w54"
+  },
+  {
+    "text": "salary",
+    "start": 27.7,
+    "end": 27.99,
+    "id": "w55"
+  },
+  {
+    "text": "growth",
+    "start": 27.99,
+    "end": 28.53,
+    "id": "w56"
+  },
+  {
+    "text": "speed",
+    "start": 28.53,
+    "end": 29,
+    "id": "w57"
+  },
+  {
+    "text": "to",
+    "start": 29,
+    "end": 29.22,
+    "id": "w58"
+  },
+  {
+    "text": "move",
+    "start": 29.22,
+    "end": 29.66,
+    "id": "w59"
+  },
+  {
+    "text": "out.",
+    "start": 29.66,
+    "end": 30.07,
+    "id": "w60"
+  },
+  {
+    "text": "Smart",
+    "start": 31.02,
+    "end": 31.55,
+    "id": "w61"
+  },
+  {
+    "text": "professionals,",
+    "start": 31.7,
+    "end": 33.15,
+    "id": "w62"
+  },
+  {
+    "text": "the",
+    "start": 33.15,
+    "end": 33.38,
+    "id": "w63"
+  },
+  {
+    "text": "job",
+    "start": 33.38,
+    "end": 33.61,
+    "id": "w64"
+  },
+  {
+    "text": "is",
+    "start": 33.61,
+    "end": 33.74,
+    "id": "w65"
+  },
+  {
+    "text": "out.",
+    "start": 33.77,
+    "end": 34.07,
+    "id": "w66"
+  },
+  {
+    "text": "My",
+    "start": 35.02,
+    "end": 35.33,
+    "id": "w67"
+  },
+  {
+    "text": "job",
+    "start": 35.69,
+    "end": 35.83,
+    "id": "w68"
+  },
+  {
+    "text": "is",
+    "start": 35.83,
+    "end": 36.16,
+    "id": "w69"
+  },
+  {
+    "text": "out,",
+    "start": 36.16,
+    "end": 37,
+    "id": "w70"
+  },
+  {
+    "text": "my",
+    "start": 37,
+    "end": 37.13,
+    "id": "w71"
+  },
+  {
+    "text": "second",
+    "start": 37.13,
+    "end": 37.52,
+    "id": "w72"
+  },
+  {
+    "text": "income",
+    "start": 37.52,
+    "end": 37.9,
+    "id": "w73"
+  },
+  {
+    "text": "stream",
+    "start": 37.9,
+    "end": 38.05,
+    "id": "w74"
+  },
+  {
+    "text": "is",
+    "start": 38.22,
+    "end": 38.43,
+    "id": "w75"
+  },
+  {
+    "text": "built.",
+    "start": 38.43,
+    "end": 39,
+    "id": "w76"
+  },
+  {
+    "text": "AI",
+    "start": 39.02,
+    "end": 39.25,
+    "id": "w77"
+  },
+  {
+    "text": "can",
+    "start": 39.25,
+    "end": 39.7,
+    "id": "w78"
+  },
+  {
+    "text": "become",
+    "start": 39.7,
+    "end": 40.36,
+    "id": "w79"
+  },
+  {
+    "text": "your",
+    "start": 40.36,
+    "end": 40.78,
+    "id": "w80"
+  },
+  {
+    "text": "advantage.",
+    "start": 40.9,
+    "end": 42,
+    "id": "w81"
+  },
+  {
+    "text": "Random",
+    "start": 42.02,
+    "end": 42.52,
+    "id": "w82"
+  },
+  {
+    "text": "tools",
+    "start": 42.7,
+    "end": 42.95,
+    "id": "w83"
+  },
+  {
+    "text": "are",
+    "start": 42.95,
+    "end": 43.21,
+    "id": "w84"
+  },
+  {
+    "text": "available.",
+    "start": 43.21,
+    "end": 44,
+    "id": "w85"
+  },
+  {
+    "text": "Services,",
+    "start": 44.02,
+    "end": 44.73,
+    "id": "w86"
+  },
+  {
+    "text": "offers,",
+    "start": 44.73,
+    "end": 45.31,
+    "id": "w87"
+  },
+  {
+    "text": "systems,",
+    "start": 45.31,
+    "end": 46,
+    "id": "w88"
+  },
+  {
+    "text": "digital",
+    "start": 46,
+    "end": 46.53,
+    "id": "w89"
+  },
+  {
+    "text": "assets",
+    "start": 46.53,
+    "end": 47,
+    "id": "w90"
+  },
+  {
+    "text": "are",
+    "start": 47,
+    "end": 47.05,
+    "id": "w91"
+  },
+  {
+    "text": "built.",
+    "start": 47.22,
+    "end": 48,
+    "id": "w92"
+  },
+  {
+    "text": "This",
+    "start": 48,
+    "end": 48.7,
+    "id": "w93"
+  },
+  {
+    "text": "Sunday,",
+    "start": 48.7,
+    "end": 50,
+    "id": "w94"
+  },
+  {
+    "text": "you",
+    "start": 50,
+    "end": 50.17,
+    "id": "w95"
+  },
+  {
+    "text": "need",
+    "start": 50.17,
+    "end": 50.39,
+    "id": "w96"
+  },
+  {
+    "text": "free",
+    "start": 50.39,
+    "end": 50.61,
+    "id": "w97"
+  },
+  {
+    "text": "Telugu",
+    "start": 50.61,
+    "end": 50.95,
+    "id": "w98"
+  },
+  {
+    "text": "plus",
+    "start": 50.95,
+    "end": 51.05,
+    "id": "w99"
+  },
+  {
+    "text": "English",
+    "start": 51.15,
+    "end": 51.39,
+    "id": "w100"
+  },
+  {
+    "text": "webinar.",
+    "start": 51.68,
+    "end": 52,
+    "id": "w101"
+  },
+  {
+    "text": "If",
+    "start": 52.02,
+    "end": 52.1,
+    "id": "w102"
+  },
+  {
+    "text": "you",
+    "start": 52.1,
+    "end": 52.25,
+    "id": "w103"
+  },
+  {
+    "text": "have",
+    "start": 52.25,
+    "end": 52.46,
+    "id": "w104"
+  },
+  {
+    "text": "a",
+    "start": 52.46,
+    "end": 52.51,
+    "id": "w105"
+  },
+  {
+    "text": "stable",
+    "start": 52.69,
+    "end": 52.82,
+    "id": "w106"
+  },
+  {
+    "text": "job",
+    "start": 52.82,
+    "end": 53,
+    "id": "w107"
+  },
+  {
+    "text": "but",
+    "start": 53,
+    "end": 53.15,
+    "id": "w108"
+  },
+  {
+    "text": "bigger",
+    "start": 53.15,
+    "end": 53.45,
+    "id": "w109"
+  },
+  {
+    "text": "ambition,",
+    "start": 53.52,
+    "end": 54,
+    "id": "w110"
+  },
+  {
+    "text": "this",
+    "start": 54,
+    "end": 54.36,
+    "id": "w111"
+  },
+  {
+    "text": "session",
+    "start": 54.36,
+    "end": 54.99,
+    "id": "w112"
+  },
+  {
+    "text": "is",
+    "start": 54.99,
+    "end": 55.05,
+    "id": "w113"
+  },
+  {
+    "text": "for",
+    "start": 55.15,
+    "end": 55.34,
+    "id": "w114"
+  },
+  {
+    "text": "you.",
+    "start": 55.42,
+    "end": 56,
+    "id": "w115"
+  },
+  {
+    "text": "What's",
+    "start": 56.02,
+    "end": 56.33,
+    "id": "w116"
+  },
+  {
+    "text": "up,",
+    "start": 56.33,
+    "end": 56.55,
+    "id": "w117"
+  },
+  {
+    "text": "group?",
+    "start": 56.69,
+    "end": 57,
+    "id": "w118"
+  },
+  {
+    "text": "Join",
+    "start": 57,
+    "end": 57.18,
+    "id": "w119"
+  },
+  {
+    "text": "Avanti",
+    "start": 57.18,
+    "end": 57.44,
+    "id": "w120"
+  },
+  {
+    "text": "for",
+    "start": 57.44,
+    "end": 57.58,
+    "id": "w121"
+  },
+  {
+    "text": "webinar",
+    "start": 57.58,
+    "end": 57.78,
+    "id": "w122"
+  },
+  {
+    "text": "details.",
+    "start": 57.9,
+    "end": 58.4,
+    "id": "w123"
+  }
+]

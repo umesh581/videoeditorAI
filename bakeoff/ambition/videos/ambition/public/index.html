@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" />
+<style>
+@font-face { font-family:"Inter"; src:url("fonts/Inter-400-latin.woff2") format("woff2"); font-weight:400; font-display:block; }
+@font-face { font-family:"Inter"; src:url("fonts/Inter-700-latin.woff2") format("woff2"); font-weight:700; font-display:block; }
+:root { --bg:#0a0a0a; --text:#ffffff; --accent-0:#D4FF33; --accent-1:#ffffff; --accent-2:#9a9a9a; --accent-3:#2a2a2a; --accent-4:#D4FF33; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#0a0a0a; font-family:"Inter", ui-sans-serif, system-ui, sans-serif; }
+#stage { position:relative; width:100%; height:100%; overflow:hidden; background:#0a0a0a; }
+.video-wrapper { position:absolute; left:0; top:0; width:1080px; height:1920px; overflow:hidden; transform-origin:0 0; }
+#pip-ring { position:absolute; left:795px; top:28px; width:259px; height:461px; border-radius:24px; box-shadow:0 0 0 4px #D4FF33, 0 18px 40px rgba(0,0,0,0.5); opacity:0; pointer-events:none; }
+.video-wrapper video { width:100%; height:100%; object-fit:cover; }
+.video-wrapper.pip-pill { border-radius:24px; box-shadow:0 0 0 4px #D4FF33, 0 18px 40px rgba(0,0,0,0.5); }
+.card-host { position:absolute; pointer-events:none; overflow:hidden; z-index:2; }
+.card-host .card { position:relative; width:100%; height:100%; overflow:hidden; }
+.card-host .char { display:inline-block; visibility:visible; }
+</style></head>
+<body>
+<div id="stage" data-composition-id="talking-head-recut" data-start="0" data-duration="58.6" data-fps="30" data-width="1080" data-height="1920">
+<div id="pip-ring"></div><div class="video-wrapper" id="video-wrap"><video id="bg-video" src="input-video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="58.6" data-track-index="1"></video></div>
+<div class="card-host clip" id="host-card-01" data-card-id="card-01" data-start="0.3000" data-duration="3.7000" data-track-index="2" style="left:0px;top:0px;width:1080px;height:1920px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-01"><style>
+.card[data-card-id="card-01"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:transparent; }
+.card[data-card-id="card-01"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-01"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-01"] .lime { color:#D4FF33; }
+.card[data-card-id="card-01"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-01"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-01"] .wrap { position:absolute; left:64px; right:170px; top:1060px; }
+.card[data-card-id="card-01"] .shade { position:absolute; left:0; right:0; top:900px; height:700px;
+  background:linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.75) 45%, rgba(10,10,10,0.0) 100%); }
+.card[data-card-id="card-01"] .title { font-size:112px; margin-top:26px; }
+.card[data-card-id="card-01"] .bar { height:10px; width:0; background:#D4FF33; margin-top:30px; }</style><div class="root"><div class="shade" id="c1-shade"></div><div class="wrap">
+<div class="kicker" id="c1-k">An honest question</div>
+<h1 class="title" id="c1-t">Does your salary match your <span class="lime">ambition?</span></h1>
+<div class="bar" id="c1-bar"></div></div></div></div></div>
+<div class="card-host clip" id="host-card-02" data-card-id="card-02" data-start="4.2000" data-duration="4.8000" data-track-index="2" style="left:0px;top:844px;width:1080px;height:692px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-02"><style>
+.card[data-card-id="card-02"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#0a0a0a; }
+.card[data-card-id="card-02"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-02"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-02"] .lime { color:#D4FF33; }
+.card[data-card-id="card-02"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-02"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-02"] .row { position:absolute; left:64px; right:170px; display:flex; align-items:baseline; gap:28px; }
+.card[data-card-id="card-02"] .lab { font-weight:700; font-size:24px; letter-spacing:0.2em; color:#9a9a9a; width:230px; }
+.card[data-card-id="card-02"] .val { font-weight:700; font-size:72px; letter-spacing:-0.035em; }
+.card[data-card-id="card-02"] .rule { position:absolute; left:64px; height:3px; width:0; background:#333; }</style><div class="root"><div class="row" id="c2-r1" style="top:110px"><div class="lab">EVERY MONTH</div><div class="val">Salary credited</div></div>
+<div class="rule" id="c2-rule" style="top:262px"></div>
+<div class="row" id="c2-r2" style="top:320px"><div class="lab">EVERY YEAR</div><div class="val">Wait for the <span class="lime">appraisal</span></div></div></div></div></div>
+<div class="card-host clip" id="host-card-03" data-card-id="card-03" data-start="9.0000" data-duration="4.0000" data-track-index="2" style="left:0px;top:844px;width:1080px;height:692px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-03"><style>
+.card[data-card-id="card-03"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#0a0a0a; }
+.card[data-card-id="card-03"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-03"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-03"] .lime { color:#D4FF33; }
+.card[data-card-id="card-03"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-03"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-03"] .title { position:absolute; left:64px; right:170px; top:90px; font-size:84px; }
+.card[data-card-id="card-03"] .track { position:absolute; left:64px; top:330px; width:840px; height:40px; background:#1c1c1c; border-radius:6px; }
+.card[data-card-id="card-03"] .fill { position:absolute; left:64px; top:330px; width:0; height:40px; background:#D4FF33; border-radius:6px; }
+.card[data-card-id="card-03"] .cap { position:absolute; left:400px; top:300px; width:6px; height:100px; background:#fff; }
+.card[data-card-id="card-03"] .capl { position:absolute; left:420px; top:410px; font-weight:700; font-size:26px; letter-spacing:0.2em; }
+.card[data-card-id="card-03"] .sub { position:absolute; left:64px; top:470px; font-size:44px; font-weight:700; color:#9a9a9a; }</style><div class="root"><h2 class="title" id="c3-t">Appraisals have a limit.</h2><div class="track"></div><div class="fill" id="c3-fill"></div>
+<div class="cap" id="c3-cap"></div><div class="capl" id="c3-capl">CAP</div><div class="sub" id="c3-sub">So life moves slow.</div></div></div></div>
+<div class="card-host clip" id="host-card-04" data-card-id="card-04" data-start="13.2000" data-duration="7.8000" data-track-index="2" style="left:0px;top:844px;width:1080px;height:692px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-04"><style>
+.card[data-card-id="card-04"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#0a0a0a; }
+.card[data-card-id="card-04"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-04"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-04"] .lime { color:#D4FF33; }
+.card[data-card-id="card-04"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-04"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-04"] .chain { position:absolute; left:64px; right:170px; top:110px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+.card[data-card-id="card-04"] .chip { padding:20px 28px; border:3px solid #fff; border-radius:999px; font-weight:700; font-size:46px; }
+.card[data-card-id="card-04"] .chip.on { background:#D4FF33; color:#0a0a0a; border-color:#D4FF33; }
+.card[data-card-id="card-04"] .arr { font-weight:700; font-size:46px; color:#9a9a9a; }
+.card[data-card-id="card-04"] .turn { position:absolute; left:64px; top:430px; font-weight:700; font-size:76px; letter-spacing:-0.035em; }</style><div class="root"><div class="chain"><div class="chip" id="c4-a">Job</div><div class="arr" id="c4-x1">→</div><div class="chip" id="c4-b">Salary</div>
+<div class="arr" id="c4-x2">→</div><div class="chip on" id="c4-c">Stable life</div></div>
+<div class="turn" id="c4-turn">But to be honest…</div></div></div></div>
+<div class="card-host clip" id="host-card-05" data-card-id="card-05" data-start="21.0000" data-duration="9.6000" data-track-index="2" style="left:0px;top:0px;width:1080px;height:1920px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-05"><style>
+.card[data-card-id="card-05"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#0a0a0a; }
+.card[data-card-id="card-05"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-05"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-05"] .lime { color:#D4FF33; }
+.card[data-card-id="card-05"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-05"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-05"] .head { position:absolute; left:64px; top:300px; }
+.card[data-card-id="card-05"] .title { font-size:96px; margin-top:24px; }
+.card[data-card-id="card-05"] .list { position:absolute; left:64px; right:170px; top:640px; }
+.card[data-card-id="card-05"] .it { display:flex; gap:26px; align-items:center; font-weight:700; font-size:66px; letter-spacing:-0.03em; margin:22px 0; }
+.card[data-card-id="card-05"] .dot { width:22px; height:22px; border-radius:50%; background:#D4FF33; flex:none; }
+.card[data-card-id="card-05"] .slab { position:absolute; left:64px; right:170px; top:1180px; padding:34px 36px; font-weight:700; font-size:62px; line-height:1.05; letter-spacing:-0.03em; }</style><div class="root"><div class="head"><div class="kicker" id="c5-k">What you actually want</div></div>
+<div class="list"><div class="it" id="c5-1"><span class="dot"></span>Your goals</div><div class="it" id="c5-2"><span class="dot"></span>Family dreams</div>
+<div class="it" id="c5-3"><span class="dot"></span>Lifestyle</div><div class="it" id="c5-4"><span class="dot"></span>Freedom plans</div></div>
+<div class="slab" id="c5-slab">Can't move at salary-growth speed.</div></div></div></div>
+<div class="card-host clip" id="host-card-06" data-card-id="card-06" data-start="31.0000" data-duration="8.0000" data-track-index="2" style="left:0px;top:0px;width:1080px;height:1920px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-06"><style>
+.card[data-card-id="card-06"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:transparent; }
+.card[data-card-id="card-06"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-06"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-06"] .lime { color:#D4FF33; }
+.card[data-card-id="card-06"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-06"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-06"] .shade { position:absolute; left:0; right:0; top:820px; height:820px;
+  background:linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.8) 40%, rgba(10,10,10,0.0) 100%); }
+.card[data-card-id="card-06"] .q { position:absolute; left:64px; right:170px; top:990px; font-weight:700; font-size:92px; line-height:1.0; letter-spacing:-0.04em; }
+.card[data-card-id="card-06"] .q2 { position:absolute; left:64px; right:170px; top:1290px; font-weight:700; font-size:60px; line-height:1.05; letter-spacing:-0.03em; }
+.card[data-card-id="card-06"] .mark { position:absolute; left:58px; top:870px; font-weight:700; font-size:160px; color:#D4FF33; line-height:1; }</style><div class="root"><div class="shade" id="c6-shade"></div><div class="mark" id="c6-m">“</div>
+<div class="q" id="c6-q">Smart professionals don't quit their jobs.</div>
+<div class="q2" id="c6-q2">They build a <span class="lime">second income stream.</span></div></div></div></div>
+<div class="card-host clip" id="host-card-07" data-card-id="card-07" data-start="39.2000" data-duration="8.8000" data-track-index="2" style="left:0px;top:844px;width:1080px;height:692px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-07"><style>
+.card[data-card-id="card-07"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#0a0a0a; }
+.card[data-card-id="card-07"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-07"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-07"] .lime { color:#D4FF33; }
+.card[data-card-id="card-07"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-07"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-07"] .title { position:absolute; left:64px; right:170px; top:80px; font-size:80px; }
+.card[data-card-id="card-07"] .not { position:absolute; left:64px; top:240px; font-weight:700; font-size:44px; color:#9a9a9a; text-decoration:line-through; text-decoration-color:#D4FF33; text-decoration-thickness:5px; }
+.card[data-card-id="card-07"] .grid { position:absolute; left:64px; right:170px; top:330px; display:flex; flex-wrap:wrap; gap:16px; }
+.card[data-card-id="card-07"] .chip { padding:18px 26px; border-radius:14px; background:#1a1a1a; border:2px solid #2a2a2a; font-weight:700; font-size:44px; }</style><div class="root"><h2 class="title" id="c7-t">AI = your <span class="lime">advantage.</span></h2><div class="not" id="c7-not">Random tools</div>
+<div class="grid"><div class="chip" id="c7-1">Services</div><div class="chip" id="c7-2">Offers</div><div class="chip" id="c7-3">Systems</div><div class="chip slab" id="c7-4">Digital assets</div></div></div></div></div>
+<div class="card-host clip" id="host-card-08" data-card-id="card-08" data-start="48.0000" data-duration="8.0000" data-track-index="2" style="left:0px;top:0px;width:1080px;height:1920px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-08"><style>
+.card[data-card-id="card-08"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#0a0a0a; }
+.card[data-card-id="card-08"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-08"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-08"] .lime { color:#D4FF33; }
+.card[data-card-id="card-08"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-08"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-08"] .day { position:absolute; left:64px; top:300px; padding:24px 34px; font-weight:700; font-size:120px; letter-spacing:-0.04em; }
+.card[data-card-id="card-08"] .title { position:absolute; left:64px; right:170px; top:520px; font-size:104px; }
+.card[data-card-id="card-08"] .det { position:absolute; left:64px; top:790px; font-weight:700; font-size:52px; color:#9a9a9a; }
+.card[data-card-id="card-08"] .who { position:absolute; left:64px; right:170px; top:1000px; padding-top:34px; border-top:3px solid #333; font-weight:700; font-size:58px; line-height:1.1; letter-spacing:-0.03em; }</style><div class="root"><div class="day slab" id="c8-day">This Sunday</div><h2 class="title" id="c8-t">Free live webinar</h2>
+<div class="det" id="c8-det">Telugu + English</div>
+<div class="who" id="c8-who">Stable job, but a bigger ambition? <span class="lime">This session is for you.</span></div></div></div></div>
+<div class="card-host clip" id="host-card-09" data-card-id="card-09" data-start="56.0000" data-duration="2.6000" data-track-index="2" style="left:0px;top:0px;width:1080px;height:1920px;visibility:hidden;opacity:0;"><div class="card" data-card-id="card-09"><style>
+.card[data-card-id="card-09"] .root { width:100%; height:100%; position:relative; overflow:hidden; color:#fff;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:transparent; }
+.card[data-card-id="card-09"] .kicker { display:inline-block; padding:10px 16px; background:#fff; color:#0a0a0a; font-weight:700;
+  font-size:22px; letter-spacing:0.22em; text-transform:uppercase; }
+.card[data-card-id="card-09"] .title { font-weight:700; letter-spacing:-0.04em; line-height:0.98; margin:0; }
+.card[data-card-id="card-09"] .lime { color:#D4FF33; }
+.card[data-card-id="card-09"] .slab { background:#D4FF33; color:#0a0a0a; }
+.card[data-card-id="card-09"] .muted { color:#9a9a9a; }
+
+.card[data-card-id="card-09"] .cta { position:absolute; left:64px; right:170px; top:1180px; padding:36px 40px; border-radius:22px; font-weight:700; font-size:62px; line-height:1.05; letter-spacing:-0.03em; }
+.card[data-card-id="card-09"] .sub { display:block; font-size:34px; margin-top:12px; opacity:0.75; }</style><div class="root"><div class="cta slab" id="c9-cta">Join the WhatsApp group<span class="sub">Webinar details inside →</span></div></div></div></div>
+<script src="vendor/gsap.min.js"></script>
+<script>
+(function () {
+  const tl = window.gsap.timeline({ paused: true });
+    tl.set(".card-host[data-card-id=\"card-01\"]",{visibility:'visible'},0.3);
+  tl.fromTo(".card-host[data-card-id=\"card-01\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},0.3);
+  tl.fromTo(".card[data-card-id=\"card-01\"] #c1-shade",{opacity:0},{opacity:1,duration:0.4,ease:'power2.out'},0.3);
+  tl.fromTo(".card[data-card-id=\"card-01\"] #c1-k",{opacity:0,x:-80},{opacity:1,x:0,duration:0.45,ease:'power3.out'},0.4);
+  tl.fromTo(".card[data-card-id=\"card-01\"] #c1-t",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.7,ease:'power2.inOut'},0.6333);
+  tl.fromTo(".card[data-card-id=\"card-01\"] #c1-bar",{width:0},{width:360,duration:0.6,ease:'power2.out'},1.7);
+  tl.to(".card-host[data-card-id=\"card-01\"]",{opacity:0,duration:0.3,ease:'power2.in'},3.7);
+  tl.set(".card-host[data-card-id=\"card-01\"]",{visibility:'hidden'},4.0);
+  tl.to('#video-wrap',{x:0,y:0,scale:1,clipPath:'inset(0px 0px 1076px 0px round 0px)',duration:0.6,ease:'power2.inOut'},3.8667);
+  tl.set(['#video-wrap','#pip-ring'],{zIndex:0},3.8667);
+  tl.set(".card-host[data-card-id=\"card-02\"]",{visibility:'visible'},4.2);
+  tl.fromTo(".card-host[data-card-id=\"card-02\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},4.2);
+  tl.fromTo(".card[data-card-id=\"card-02\"] #c2-r1",{opacity:0,x:-80},{opacity:1,x:0,duration:0.5,ease:'power3.out'},4.4);
+  tl.fromTo(".card[data-card-id=\"card-02\"] #c2-rule",{width:0},{width:840,duration:0.5,ease:'power2.out'},5.8);
+  tl.fromTo(".card[data-card-id=\"card-02\"] #c2-r2",{opacity:0,x:-80},{opacity:1,x:0,duration:0.5,ease:'power3.out'},6.7);
+  tl.to(".card-host[data-card-id=\"card-02\"]",{opacity:0,duration:0.3,ease:'power2.in'},8.7);
+  tl.set(".card-host[data-card-id=\"card-02\"]",{visibility:'hidden'},9.0);
+  tl.set(".card-host[data-card-id=\"card-03\"]",{visibility:'visible'},9.0);
+  tl.fromTo(".card-host[data-card-id=\"card-03\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},9.0);
+  tl.fromTo(".card[data-card-id=\"card-03\"] #c3-t",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.6,ease:'power2.inOut'},9.0);
+  tl.fromTo(".card[data-card-id=\"card-03\"] #c3-fill",{width:0},{width:340,duration:1.4,ease:'power2.out'},9.6);
+  tl.fromTo(".card[data-card-id=\"card-03\"] #c3-cap",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},10.9);
+  tl.fromTo(".card[data-card-id=\"card-03\"] #c3-capl",{opacity:0},{opacity:1,duration:0.3,ease:'power2.out'},11.0);
+  tl.fromTo(".card[data-card-id=\"card-03\"] #c3-sub",{opacity:0,x:-80},{opacity:1,x:0,duration:0.5,ease:'power3.out'},11.6);
+  tl.to(".card-host[data-card-id=\"card-03\"]",{opacity:0,duration:0.3,ease:'power2.in'},12.7);
+  tl.set(".card-host[data-card-id=\"card-03\"]",{visibility:'hidden'},13.0);
+  tl.set(".card-host[data-card-id=\"card-04\"]",{visibility:'visible'},13.2);
+  tl.fromTo(".card-host[data-card-id=\"card-04\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},13.2);
+  tl.fromTo(".card[data-card-id=\"card-04\"] #c4-a",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.4,ease:'back.out(1.6)'},13.6);
+  tl.fromTo(".card[data-card-id=\"card-04\"] #c4-x1",{opacity:0},{opacity:1,duration:0.3,ease:'power2.out'},14.2);
+  tl.fromTo(".card[data-card-id=\"card-04\"] #c4-b",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.4,ease:'back.out(1.6)'},14.6);
+  tl.fromTo(".card[data-card-id=\"card-04\"] #c4-x2",{opacity:0},{opacity:1,duration:0.3,ease:'power2.out'},15.6);
+  tl.fromTo(".card[data-card-id=\"card-04\"] #c4-c",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.45,ease:'back.out(1.6)'},16.1);
+  tl.fromTo(".card[data-card-id=\"card-04\"] #c4-turn",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.6,ease:'power2.inOut'},19.0);
+  tl.to(".card-host[data-card-id=\"card-04\"]",{opacity:0,duration:0.3,ease:'power2.in'},20.7);
+  tl.set(".card-host[data-card-id=\"card-04\"]",{visibility:'hidden'},21.0);
+  tl.to('#video-wrap',{x:795,y:28,scale:0.24,clipPath:'inset(0px 0px 0px 0px round 100px)',duration:0.6,ease:'power2.inOut'},20.6667);
+  tl.set(['#video-wrap','#pip-ring'],{zIndex:5},20.6667);
+  tl.to('#pip-ring',{opacity:1,duration:0.3},21.0667);
+  tl.set(".card-host[data-card-id=\"card-05\"]",{visibility:'visible'},21.0);
+  tl.fromTo(".card-host[data-card-id=\"card-05\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},21.0);
+  tl.fromTo(".card[data-card-id=\"card-05\"] #c5-k",{opacity:0,x:-80},{opacity:1,x:0,duration:0.4,ease:'power3.out'},21.2);
+  tl.fromTo(".card[data-card-id=\"card-05\"] #c5-1",{opacity:0,x:-80},{opacity:1,x:0,duration:0.45,ease:'power3.out'},21.4);
+  tl.fromTo(".card[data-card-id=\"card-05\"] #c5-2",{opacity:0,x:-80},{opacity:1,x:0,duration:0.45,ease:'power3.out'},22.6);
+  tl.fromTo(".card[data-card-id=\"card-05\"] #c5-3",{opacity:0,x:-80},{opacity:1,x:0,duration:0.45,ease:'power3.out'},24.1);
+  tl.fromTo(".card[data-card-id=\"card-05\"] #c5-4",{opacity:0,x:-80},{opacity:1,x:0,duration:0.45,ease:'power3.out'},26.1);
+  tl.fromTo(".card[data-card-id=\"card-05\"] #c5-slab",{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.6,ease:'power2.inOut'},27.3);
+  tl.to(".card-host[data-card-id=\"card-05\"]",{opacity:0,duration:0.3,ease:'power2.in'},30.3);
+  tl.set(".card-host[data-card-id=\"card-05\"]",{visibility:'hidden'},30.6);
+  tl.to('#video-wrap',{x:0,y:0,scale:1,clipPath:'inset(0px 0px 0px 0px round 0px)',duration:0.6,ease:'power2.inOut'},30.6667);
+  tl.set(['#video-wrap','#pip-ring'],{zIndex:0},30.6667);
+  tl.to('#pip-ring',{opacity:0,duration:0.2},30.6667);
+  tl.set(".card-host[data-card-id=\"card-06\"]",{visibility:'visible'},31.0);
+  tl.fromTo(".card-host[data-card-id=\"card-06\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},31.0);
+  tl.fromTo(".card[data-card-id=\"card-06\"] #c6-shade",{opacity:0},{opacity:1,duration:0.4,ease:'power2.out'},31.0);
+  tl.fromTo(".card[data-card-id=\"card-06\"] #c6-m",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.4,ease:'back.out(1.6)'},31.1);
+  tl.fromTo(".card[data-card-id=\"card-06\"] #c6-q",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.7,ease:'power2.inOut'},31.3);
+  tl.fromTo(".card[data-card-id=\"card-06\"] #c6-q2",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.7,ease:'power2.inOut'},35.2);
+  tl.to(".card-host[data-card-id=\"card-06\"]",{opacity:0,duration:0.3,ease:'power2.in'},38.7);
+  tl.set(".card-host[data-card-id=\"card-06\"]",{visibility:'hidden'},39.0);
+  tl.to('#video-wrap',{x:0,y:0,scale:1,clipPath:'inset(0px 0px 1076px 0px round 0px)',duration:0.6,ease:'power2.inOut'},38.8667);
+  tl.set(['#video-wrap','#pip-ring'],{zIndex:0},38.8667);
+  tl.set(".card-host[data-card-id=\"card-07\"]",{visibility:'visible'},39.2);
+  tl.fromTo(".card-host[data-card-id=\"card-07\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},39.2);
+  tl.fromTo(".card[data-card-id=\"card-07\"] #c7-t",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.6,ease:'power2.inOut'},39.3);
+  tl.fromTo(".card[data-card-id=\"card-07\"] #c7-not",{opacity:0},{opacity:1,duration:0.4,ease:'power2.out'},42.2);
+  tl.fromTo(".card[data-card-id=\"card-07\"] #c7-1",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},44.2);
+  tl.fromTo(".card[data-card-id=\"card-07\"] #c7-2",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},45.0);
+  tl.fromTo(".card[data-card-id=\"card-07\"] #c7-3",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},45.8);
+  tl.fromTo(".card[data-card-id=\"card-07\"] #c7-4",{opacity:0,scale:0.6},{opacity:1,scale:1,duration:0.4,ease:'back.out(1.6)'},46.6);
+  tl.to(".card-host[data-card-id=\"card-07\"]",{opacity:0,duration:0.3,ease:'power2.in'},47.7);
+  tl.set(".card-host[data-card-id=\"card-07\"]",{visibility:'hidden'},48.0);
+  tl.to('#video-wrap',{x:795,y:28,scale:0.24,clipPath:'inset(0px 0px 0px 0px round 100px)',duration:0.6,ease:'power2.inOut'},47.6667);
+  tl.set(['#video-wrap','#pip-ring'],{zIndex:5},47.6667);
+  tl.to('#pip-ring',{opacity:1,duration:0.3},48.0667);
+  tl.set(".card-host[data-card-id=\"card-08\"]",{visibility:'visible'},48.0);
+  tl.fromTo(".card-host[data-card-id=\"card-08\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},48.0);
+  tl.fromTo(".card[data-card-id=\"card-08\"] #c8-day",{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.5,ease:'power2.inOut'},48.2);
+  tl.fromTo(".card[data-card-id=\"card-08\"] #c8-t",{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0 0 0 0)',duration:0.6,ease:'power2.inOut'},48.7);
+  tl.fromTo(".card[data-card-id=\"card-08\"] #c8-det",{opacity:0},{opacity:1,duration:0.4,ease:'power2.out'},49.5);
+  tl.fromTo(".card[data-card-id=\"card-08\"] #c8-who",{opacity:0,y:80},{opacity:1,y:0,duration:0.5,ease:'power3.out'},52.1);
+  tl.to(".card-host[data-card-id=\"card-08\"]",{opacity:0,duration:0.3,ease:'power2.in'},55.7);
+  tl.set(".card-host[data-card-id=\"card-08\"]",{visibility:'hidden'},56.0);
+  tl.to('#video-wrap',{x:0,y:0,scale:1,clipPath:'inset(0px 0px 0px 0px round 0px)',duration:0.6,ease:'power2.inOut'},55.6667);
+  tl.set(['#video-wrap','#pip-ring'],{zIndex:0},55.6667);
+  tl.to('#pip-ring',{opacity:0,duration:0.2},55.6667);
+  tl.set(".card-host[data-card-id=\"card-09\"]",{visibility:'visible'},56.0);
+  tl.fromTo(".card-host[data-card-id=\"card-09\"]",{opacity:0},{opacity:1,duration:0.35,ease:'power2.out'},56.0);
+  tl.fromTo(".card[data-card-id=\"card-09\"] #c9-cta",{opacity:0,y:80},{opacity:1,y:0,duration:0.5,ease:'power3.out'},56.1333);
+  tl.to(".card-host[data-card-id=\"card-09\"]",{opacity:0,duration:0.3,ease:'power2.in'},58.3);
+  tl.set(".card-host[data-card-id=\"card-09\"]",{visibility:'hidden'},58.6);
+  window.__timelines = window.__timelines || {};
+  window.__timelines["talking-head-recut"] = tl;
+})();
+</script>
+</div></body></html>

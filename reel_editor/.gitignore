@@ -1,0 +1,9 @@
+projects/
+models/
+remotion/node_modules/
+music/*
+!music/README.md
+library/*
+!library/README.md
+.env
+inbox/

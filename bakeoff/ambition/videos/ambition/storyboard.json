@@ -1,0 +1,127 @@
+{
+ "schemaVersion": 3,
+ "composition": {
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationSeconds": 58.6,
+  "layout": "portrait",
+  "themeId": "noir",
+  "seed": 42
+ },
+ "videoTrack": {
+  "sourcePath": "input-video.mp4",
+  "startSec": 0,
+  "endSec": 58.6,
+  "bounds": {
+   "x": 0,
+   "y": 0,
+   "width": 1080,
+   "height": 1920
+  }
+ },
+ "subtitles": {
+  "enabled": false
+ },
+ "cards": [
+  {
+   "id": "card-01",
+   "intent": "Hook: the speaker's opening question, set big over the full-bleed video",
+   "startSec": 0.3,
+   "endSec": 4.0,
+   "accentIndex": 0,
+   "zone": "video-overlay",
+   "contentHints": {
+    "layout": "overlay"
+   }
+  },
+  {
+   "id": "card-02",
+   "intent": "The salaried rhythm: monthly credit, yearly appraisal",
+   "startSec": 4.2,
+   "endSec": 9.0,
+   "accentIndex": 1,
+   "zone": "lower-third",
+   "contentHints": {
+    "layout": "stack"
+   }
+  },
+  {
+   "id": "card-03",
+   "intent": "Appraisals have a limit — a growth bar that hits a cap",
+   "startSec": 9.0,
+   "endSec": 13.0,
+   "accentIndex": 0,
+   "zone": "lower-third",
+   "contentHints": {
+    "layout": "stack"
+   }
+  },
+  {
+   "id": "card-04",
+   "intent": "The safe script: job → salary → stable life, then the turn",
+   "startSec": 13.2,
+   "endSec": 21.0,
+   "accentIndex": 1,
+   "zone": "lower-third",
+   "contentHints": {
+    "layout": "stack"
+   }
+  },
+  {
+   "id": "card-05",
+   "intent": "What you actually want — goals, family dreams, lifestyle, freedom — vs salary-growth speed",
+   "startSec": 21.0,
+   "endSec": 30.6,
+   "accentIndex": 0,
+   "zone": "fullscreen",
+   "contentHints": {
+    "layout": "pip"
+   }
+  },
+  {
+   "id": "card-06",
+   "intent": "The contrarian line as a pull-quote over full-bleed video",
+   "startSec": 31.0,
+   "endSec": 39.0,
+   "accentIndex": 1,
+   "zone": "video-overlay",
+   "contentHints": {
+    "layout": "overlay"
+   }
+  },
+  {
+   "id": "card-07",
+   "intent": "AI as the advantage — not random tools, but services, offers, systems, digital assets",
+   "startSec": 39.2,
+   "endSec": 48.0,
+   "accentIndex": 0,
+   "zone": "lower-third",
+   "contentHints": {
+    "layout": "stack"
+   }
+  },
+  {
+   "id": "card-08",
+   "intent": "The offer: this Sunday, free live webinar, Telugu + English, for people with a stable job but bigger ambition",
+   "startSec": 48.0,
+   "endSec": 56.0,
+   "accentIndex": 1,
+   "zone": "fullscreen",
+   "contentHints": {
+    "layout": "pip"
+   }
+  },
+  {
+   "id": "card-09",
+   "intent": "CTA: join the WhatsApp group for webinar details",
+   "startSec": 56.0,
+   "endSec": 58.6,
+   "accentIndex": 0,
+   "zone": "video-overlay",
+   "contentHints": {
+    "layout": "overlay"
+   }
+  }
+ ]
+}

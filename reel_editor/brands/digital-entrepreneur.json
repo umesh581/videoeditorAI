@@ -1,0 +1,72 @@
+{
+  "_source": "Digital Entrepreneur — Brand Guidelines, 2026 First Edition (brand_guidelines.pdf)",
+  "theme": {
+    "name": "digital-entrepreneur",
+    "colors": {
+      "accent": "#D4FF33",
+      "bg": "#000000",
+      "text": "#FFFFFF",
+      "muted": "#888888",
+      "card": "#111111",
+      "border": "#222222",
+      "onAccent": "#000000",
+      "negative": "#888888"
+    },
+    "fonts": {
+      "display": "Plus Jakarta Sans",
+      "body": "Inter"
+    },
+    "weights": {
+      "display": 800,
+      "headline": 700,
+      "sub": 600,
+      "body": 400,
+      "label": 500
+    },
+    "radius": {
+      "card": 12,
+      "tag": 999,
+      "button": 8
+    },
+    "shadows": false,
+    "scrim": 0.55,
+    "icons": "line",
+    "eyebrow": "Digital Entrepreneur",
+    "strictAccent": true
+  },
+  "defaults": {
+    "look": {
+      "grade": "brand",
+      "vignette": 0,
+      "grain": false
+    },
+    "captions": {
+      "style": "premium",
+      "highlightColor": "#D4FF33"
+    }
+  },
+  "rules": [
+    "Digital Lime only for CTAs, key highlights and active states — max ~10% of any frame.",
+    "No drop shadows; depth from Graphite borders and contrast. Radii: 8 buttons, 12 cards, 999 tags.",
+    "Icons: thin-line (Lucide) in white or lime, never emoji or multi-colour (use sticker.icon, not emoji).",
+    "Imagery: high contrast, deep blacks, desaturated; B&W preferred over poor colour. No stock clichés or posed smiles.",
+    "Text over footage always sits on a 60–80% black gradient scrim.",
+    "Voice: direct, precise, no fluff. Specific numbers and outcomes in on-screen copy.",
+    "Video mode: lit canvas + grain, soft shadows, paper cards for contrast moments; max 2 graphic elements on screen; prefer real screenshots/recordings over abstract diagrams."
+  ],
+  "video": {
+    "_why": "Owner approved (Oct 2026): on video, relax UI-only rules — lit canvas, soft depth, light cards — keep colours, type, voice, lime discipline.",
+    "canvas": "lit",
+    "grain": 0.06,
+    "shadows": true,
+    "colors": {
+      "card": "#161616",
+      "border": "rgba(255,255,255,0.10)",
+      "paper": "#F6F5F0",
+      "onPaper": "#0A0A0A"
+    },
+    "radius": {
+      "card": 18
+    }
+  }
+}

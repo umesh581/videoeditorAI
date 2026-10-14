@@ -1,0 +1,17 @@
+streamlit>=1.35.0
+pandas>=2.1.0
+plotly>=5.20.0
+folium>=0.16.0
+streamlit-folium>=0.20.0
+textblob>=0.18.0
+beautifulsoup4>=4.12.0
+lxml>=5.1.0
+requests>=2.31.0
+aiohttp>=3.9.0
+httpx>=0.27.0
+numpy>=1.26.0
+python-dateutil>=2.9.0
+nltk>=3.8.1
+apscheduler>=3.10.4
+praw>=7.7.1
+sqlalchemy>=2.0.0

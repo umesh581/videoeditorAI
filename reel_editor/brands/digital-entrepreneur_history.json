@@ -1,0 +1,51 @@
+[
+ {
+  "slug": "middleclass",
+  "version": 9,
+  "treatment": "explainer-canvas",
+  "hook": "Salary ↑ Still broke",
+  "date": "2026-10-14"
+ },
+ {
+  "slug": "salaryambition",
+  "version": 2,
+  "treatment": "explainer-canvas",
+  "hook": "Salary has a ceiling.",
+  "date": "2026-10-14"
+ },
+ {
+  "slug": "salaryambition-ad",
+  "version": 1,
+  "treatment": "explainer-canvas",
+  "hook": "Salary has a ceiling.",
+  "date": "2026-10-14"
+ },
+ {
+  "slug": "ambitionsalar-2",
+  "version": 2,
+  "treatment": "explainer-canvas",
+  "hook": "",
+  "date": "2026-10-14"
+ },
+ {
+  "slug": "ambitionsalar-2",
+  "version": 3,
+  "treatment": "editorial",
+  "hook": "Your dreams can't move at salary-growth speed.",
+  "date": "2026-10-14"
+ },
+ {
+  "slug": "ambitionsalar-2",
+  "version": 4,
+  "treatment": "editorial",
+  "hook": "Your dreams can't move at salary-growth speed.",
+  "date": "2026-10-14"
+ },
+ {
+  "slug": "ambitionsalar-2",
+  "version": 5,
+  "treatment": "bespoke:payslip",
+  "hook": "",
+  "date": "2026-10-14"
+ }
+]
