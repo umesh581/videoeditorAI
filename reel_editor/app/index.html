@@ -5,94 +5,120 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reel Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=Anek+Telugu:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Newsreader:opsz,wght@6..72,700&family=Anek+Telugu:wght@500;600&display=swap" rel="stylesheet">
 <style>
+  /* Bright Ledger: warm white, ink, green/red meaning colours, lime only as a highlighter */
   :root {
-    --lime: #D4FF33; --black: #000; --white: #fff; --carbon: #111; --graphite: #222; --smoke: #888;
+    --bg: #F6F2EA; --card: #FFFFFF; --line: #E7E0D2; --ink: #111111; --soft: #6F6A60; --faint: #A8A196;
+    --lime: #D4FF33; --green: #16A34A; --green-bg: #E9F7EE; --red: #DC2626; --red-bg: #FDECEC; --gold: #F5B800;
     --display: 'Plus Jakarta Sans', 'Anek Telugu', system-ui, sans-serif;
     --body: 'Inter', 'Anek Telugu', system-ui, sans-serif;
+    --shadow: 0 1px 2px rgba(60,45,20,.06), 0 8px 24px rgba(60,45,20,.06);
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--black); color: var(--white); font-family: var(--body); font-size: 15px; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; }
   button, input, textarea, select { font: inherit; color: inherit; }
   .app { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
-  aside { border-right: 1px solid var(--graphite); padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  aside { border-right: 1px solid var(--line); padding: 24px 20px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: #FBF8F2; }
   main { padding: 28px 40px 80px; min-width: 0; }
-  .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--lime); }
-  .rule { height: 2px; background: var(--lime); width: 64px; margin-top: 10px; }
-  h1 { font-family: var(--display); font-weight: 800; font-size: 28px; letter-spacing: -.03em; margin: 8px 0 0; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--soft); }
+  .mark { background: linear-gradient(transparent 55%, var(--lime) 55%, var(--lime) 92%, transparent 92%); padding: 0 2px; }
+  h1 { font-family: var(--display); font-weight: 800; font-size: 28px; letter-spacing: -.03em; margin: 6px 0 0; }
   h2 { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -.02em; margin: 0; }
-  h3 { font-family: var(--display); font-weight: 600; font-size: 16px; margin: 0 0 12px; }
-  .muted { color: var(--smoke); }
-  .card { background: var(--carbon); border: 1px solid var(--graphite); border-radius: 12px; padding: 20px; }
-  .drop { border: 1.5px dashed #333; border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; }
-  .drop.over, .drop:hover { border-color: var(--lime); background: #0a0a0a; }
-  .drop svg { stroke: var(--white); }
-  .drop.over svg { stroke: var(--lime); }
+  h3 { font-family: var(--display); font-weight: 700; font-size: 16px; margin: 0 0 12px; }
+  .muted { color: var(--soft); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+  .drop { border: 1.5px dashed #CFC6B5; border-radius: 14px; padding: 26px 16px; text-align: center; cursor: pointer; background: var(--card); transition: border-color 150ms ease, background 150ms ease; }
+  .drop.over, .drop:hover { border-color: var(--green); background: var(--green-bg); }
+  .drop svg { stroke: var(--ink); }
   .drop b { display: block; font-family: var(--display); font-weight: 700; font-size: 17px; margin: 10px 0 4px; }
-  label.field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 500; color: var(--smoke); letter-spacing: .06em; text-transform: uppercase; }
-  textarea, select, input[type=text] { background: var(--carbon); border: 1px solid var(--graphite); border-radius: 8px; padding: 10px 12px; text-transform: none; letter-spacing: 0; font-size: 14px; }
-  textarea:focus, select:focus, input[type=text]:focus, button:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+  label.field { display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-weight: 600; color: var(--soft); letter-spacing: .1em; text-transform: uppercase; }
+  textarea, select, input[type=text] { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 400; color: var(--ink); }
+  textarea:focus, select:focus, input[type=text]:focus, button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
   .row { display: flex; gap: 10px; align-items: center; }
-  .toggle { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--white); cursor: pointer; }
-  .toggle input { accent-color: var(--lime); width: 16px; height: 16px; }
-  .btn { border: 1px solid var(--graphite); background: var(--carbon); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: 600; font-size: 14px; transition: opacity 150ms ease, transform 150ms ease; }
+  .toggle { display: flex; align-items: center; gap: 10px; font-size: 13px; cursor: pointer; }
+  .toggle input { accent-color: var(--green); width: 16px; height: 16px; }
+  .seg { display: flex; background: #EFE9DD; border-radius: 10px; padding: 3px; gap: 3px; }
+  .seg button { flex: 1; border: 0; background: transparent; border-radius: 8px; padding: 8px 6px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--soft); }
+  .seg button.on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .btn { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 10px 16px; cursor: pointer; font-weight: 600; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: opacity 150ms ease, transform 150ms ease; }
   .btn:hover { opacity: .85; } .btn:active { transform: scale(.98); }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
-  .btn.primary { background: var(--lime); color: var(--black); border-color: var(--lime); }
+  .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn.good { background: var(--green); color: #fff; border-color: var(--green); }
   .btn.ghost { background: transparent; }
-  .jobs { display: flex; flex-direction: column; gap: 6px; }
-  .job { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; }
-  .job:hover { background: var(--carbon); }
-  .job.sel { background: var(--carbon); border-color: var(--graphite); }
+  .btn.small { padding: 6px 12px; font-size: 12px; }
+  .tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line); }
+  .tabs button { border: 0; background: none; padding: 0 0 10px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--soft); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs button.on { color: var(--ink); border-color: var(--ink); }
+  .jobs { display: flex; flex-direction: column; gap: 4px; }
+  .job { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 10px; border: 1px solid transparent; cursor: pointer; }
+  .job:hover { background: var(--card); }
+  .job.sel { background: var(--card); border-color: var(--line); box-shadow: var(--shadow); }
   .job .n { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .job .s { font-size: 12px; color: var(--smoke); display: flex; gap: 6px; align-items: center; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--smoke); flex: none; }
-  .dot.live { background: var(--lime); animation: pulse 1.2s ease-in-out infinite; }
-  .dot.ok { background: var(--lime); } .dot.err { background: #ff5c5c; }
+  .job .s { font-size: 12px; color: var(--soft); display: flex; gap: 6px; align-items: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: none; }
+  .dot.live { background: var(--gold); animation: pulse 1.2s ease-in-out infinite; }
+  .dot.ok { background: var(--green); } .dot.err { background: var(--red); }
   @keyframes pulse { 50% { opacity: .3; } }
-  .progress { height: 4px; background: var(--graphite); border-radius: 999px; overflow: hidden; }
-  .progress > i { display: block; height: 100%; background: var(--lime); width: 0; transition: width 150ms ease; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: #EFE9DD; color: var(--soft); }
+  .pill.approved { background: var(--green-bg); color: var(--green); }
+  .pill.delivered { background: #EEF2FF; color: #3949AB; }
+  .pill.held { background: #FFF6DB; color: #8A6400; }
+  .pill.skipped { background: #EFE9DD; color: var(--soft); }
+  .progress { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .progress > i { display: block; height: 100%; background: var(--ink); width: 0; transition: width 150ms ease; }
   .stages { display: flex; gap: 6px; margin: 18px 0 26px; flex-wrap: wrap; }
   .stage { flex: 1; min-width: 90px; }
-  .stage .bar { height: 3px; background: var(--graphite); border-radius: 999px; }
-  .stage.done .bar { background: var(--white); } .stage.now .bar { background: var(--lime); }
-  .stage span { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
-  .stage.now span { color: var(--lime); } .stage.done span { color: var(--white); }
+  .stage .bar { height: 4px; background: var(--line); border-radius: 999px; }
+  .stage.done .bar { background: var(--ink); } .stage.now .bar { background: var(--green); }
+  .stage span { display: block; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-top: 8px; }
+  .stage.now span { color: var(--green); } .stage.done span { color: var(--ink); }
   .activity { display: flex; align-items: center; gap: 10px; font-size: 14px; }
   .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
   .frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
-  .frame { background: var(--carbon); border: 1px solid var(--graphite); border-radius: 12px; overflow: hidden; }
-  .frame img { width: 100%; display: block; aspect-ratio: 9/16; object-fit: cover; background: #050505; }
+  .frame { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .frame img { width: 100%; display: block; aspect-ratio: 9/16; object-fit: cover; background: #EFE9DD; }
   .frame .cap { padding: 10px 12px; font-size: 12px; line-height: 1.4; }
-  .frame .cap b { color: var(--lime); font-weight: 600; letter-spacing: .1em; font-size: 10px; display: block; margin-bottom: 4px; }
+  .frame .cap b { color: var(--green); font-weight: 700; letter-spacing: .1em; font-size: 10px; display: block; margin-bottom: 4px; }
   .hook { font-family: var(--display); font-weight: 800; font-size: 26px; letter-spacing: -.03em; line-height: 1.15; }
-  .warn { border-left: 2px solid var(--lime); padding: 8px 12px; background: #0a0a0a; font-size: 13px; border-radius: 0 8px 8px 0; }
+  .big-num { font-family: var(--display); font-weight: 800; font-size: 26px; letter-spacing: -.02em; }
+  .warn { border-left: 3px solid var(--gold); padding: 8px 12px; background: #FFF9E8; font-size: 13px; border-radius: 0 8px 8px 0; line-height: 1.45; }
+  .warn.bad { border-color: var(--red); background: var(--red-bg); }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { border: 1px solid var(--graphite); border-radius: 999px; padding: 6px 12px; font-size: 12px; cursor: pointer; background: transparent; }
-  .chip:hover { border-color: var(--lime); color: var(--lime); }
-  video { width: 100%; border-radius: 12px; background: #050505; display: block; aspect-ratio: 9/16; }
-  .md { font-size: 14px; line-height: 1.6; color: #ddd; overflow-x: auto; }
+  .chip { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--card); }
+  .chip:hover { border-color: var(--green); color: var(--green); }
+  video { width: 100%; border-radius: 12px; background: #1b1b1b; display: block; aspect-ratio: 9/16; }
+  .proof { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .proof:last-child { border-bottom: 0; }
+  .proof .t { font-size: 11px; font-weight: 700; color: var(--faint); width: 38px; flex: none; padding-top: 3px; font-variant-numeric: tabular-nums; }
+  .proof .hl { font-family: 'Newsreader', Georgia, serif; font-weight: 700; font-size: 16px; line-height: 1.25; }
+  .proof img { width: 64px; height: 48px; object-fit: cover; border-radius: 6px; flex: none; background: #EFE9DD; }
+  .proof .meta { font-size: 11px; color: var(--soft); margin-top: 3px; }
+  .md { font-size: 14px; line-height: 1.6; color: #333; overflow-x: auto; }
   .md h1, .md h2 { font-size: 18px; margin: 18px 0 8px; } .md h3 { font-size: 15px; margin: 16px 0 6px; }
   .md table { border-collapse: collapse; width: 100%; font-size: 12px; margin: 10px 0; }
-  .md td, .md th { border: 1px solid var(--graphite); padding: 6px 8px; text-align: left; vertical-align: top; }
-  .md th { color: var(--smoke); font-weight: 500; }
-  details > summary { cursor: pointer; font-family: var(--display); font-weight: 600; list-style: none; display: flex; justify-content: space-between; }
-  details > summary::after { content: '+'; color: var(--smoke); } details[open] > summary::after { content: '–'; }
-  pre.log { font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--smoke); white-space: pre-wrap; max-height: 260px; overflow: auto; margin: 12px 0 0; }
+  .md td, .md th { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .md th { color: var(--soft); font-weight: 600; }
+  details > summary { cursor: pointer; font-family: var(--display); font-weight: 700; list-style: none; display: flex; justify-content: space-between; }
+  details > summary::after { content: '+'; color: var(--faint); } details[open] > summary::after { content: '–'; }
+  pre.log { font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--soft); white-space: pre-wrap; max-height: 260px; overflow: auto; margin: 12px 0 0; }
   .caption { white-space: pre-wrap; font-size: 14px; line-height: 1.55; max-height: 320px; overflow: auto; }
   .empty { display: grid; place-items: center; min-height: 70vh; text-align: center; }
-  .empty .big { font-family: var(--display); font-weight: 800; font-size: 44px; letter-spacing: -.04em; line-height: 1.05; }
+  .empty .big { font-family: var(--display); font-weight: 800; font-size: 46px; letter-spacing: -.04em; line-height: 1.05; }
   .stack { display: flex; flex-direction: column; gap: 16px; }
-  .spin { width: 14px; height: 14px; border: 2px solid var(--graphite); border-top-color: var(--lime); border-radius: 50%; animation: s 0.8s linear infinite; flex: none; }
+  .spin { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--green); border-radius: 50%; animation: s 0.8s linear infinite; flex: none; }
   @keyframes s { to { transform: rotate(360deg); } }
-  .versions a { color: var(--white); font-size: 13px; }
-  .versions a.cur { color: var(--lime); }
-  body.dragging::after { content: 'Drop to upload'; position: fixed; inset: 12px; border: 2px dashed var(--lime); border-radius: 16px; background: rgba(0,0,0,0.82);
-    display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 40px; color: var(--lime); z-index: 8; pointer-events: none; }
+  .versions a { color: var(--soft); font-size: 13px; }
+  .versions a.cur { color: var(--ink); font-weight: 700; }
+  table.lib { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.lib td, table.lib th { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  table.lib th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--soft); font-weight: 600; }
+  body.dragging::after { content: 'Drop to upload'; position: fixed; inset: 12px; border: 2px dashed var(--green); border-radius: 16px; background: rgba(246,242,234,0.9);
+    display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 40px; color: var(--ink); z-index: 8; pointer-events: none; }
   @media (max-width: 1100px) { .grid2 { grid-template-columns: 1fr; } }
   @media (max-width: 760px) {
-    .app { grid-template-columns: 1fr; } aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--graphite); }
+    .app { grid-template-columns: 1fr; } aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
     main { padding: 20px 16px 60px; }
   }
 </style>
@@ -102,37 +128,44 @@
   <aside>
     <div>
       <div class="eyebrow">Digital Entrepreneur</div>
-      <div class="rule"></div>
-      <h1>Reel Studio</h1>
-      <div class="muted" style="font-size:13px;margin-top:6px">Drop a raw take. Get a finished reel.</div>
+      <h1>Reel <span class="mark">Studio</span></h1>
+      <div class="muted" style="font-size:13px;margin-top:6px">Drop a raw take. Get a finished, proof-backed reel.</div>
     </div>
 
     <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload a raw video">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
       <b>Drop raw video</b>
       <span class="muted" style="font-size:12px">MP4 · MOV · or click to choose</span>
       <input type="file" id="file" accept="video/*,.mov,.mp4,.m4v,.webm" hidden>
     </div>
-    <div id="uploading" hidden>
-      <div class="row" style="justify-content:space-between;font-size:12px;margin-bottom:6px"><span id="upname" class="muted"></span><span id="uppct">0%</span></div>
-      <div class="progress"><i id="upbar"></i></div>
+
+    <div class="stack" style="gap:8px">
+      <label class="field">Import a whole folder</label>
+      <div class="row"><input type="text" id="folder" placeholder="~/Documents/VidIQ Downloads" style="flex:1;min-width:0"><button class="btn small" id="importbtn">Import</button></div>
+      <span class="muted" style="font-size:12px">Skips clips under 30 s and anything already done.</span>
     </div>
 
+    <label class="field">Look
+      <div class="seg" id="look"><button data-v="bright" class="on">Bright Ledger</button><button data-v="video">Dark</button></div>
+    </label>
+    <label class="field">Edit style
+      <div class="seg" id="style"><button data-v="" class="on">Standard</button><button data-v="varun-mayya">Varun Mayya</button></div>
+    </label>
     <label class="field">Notes for Claude (optional)
-      <textarea id="notes" rows="3" placeholder="e.g. Hook on the salary line. Keep it under 30s."></textarea>
+      <textarea id="notes" rows="2" placeholder="e.g. Hook on the salary line. Keep it under 45s."></textarea>
     </label>
     <div class="row">
       <label class="field" style="flex:1">Language
         <select id="lang"><option value="auto">Auto-detect</option><option value="te">Telugu</option><option value="en">English</option><option value="hi">Hindi</option></select>
       </label>
+      <label class="field" style="flex:1">Quality
+        <select id="mode"><option value="qa">Full review</option><option value="fast">Fast</option></select>
+      </label>
     </div>
-    <label class="field">Quality
-      <select id="mode"><option value="qa">Standard: quality check (+~5 min)</option><option value="fast">Fast: skip quality check</option></select>
-    </label>
-    <label class="toggle"><input type="checkbox" id="auto" checked> Render automatically (video ready when you review)</label>
+    <label class="toggle"><input type="checkbox" id="auto" checked> Render automatically</label>
 
     <div>
-      <div class="eyebrow" style="color:var(--smoke);margin-bottom:10px">Reels</div>
+      <div class="tabs" style="margin-bottom:12px"><button data-tab="reels" class="on">Reels</button><button data-tab="library">Library</button></div>
       <div class="jobs" id="jobs"></div>
     </div>
   </aside>
@@ -140,8 +173,8 @@
   <main id="main">
     <div class="empty"><div>
       <div class="eyebrow">How it works</div>
-      <div class="big" style="margin-top:14px">Drop. Review.<br><span style="color:var(--lime)">Render.</span></div>
-      <p class="muted" style="max-width:440px;margin:18px auto 0;line-height:1.6">Claude transcribes your take, writes the brief and hook, cuts the pauses, adds b-roll and brand graphics, then shows you the storyboard. Nothing renders until you say so.</p>
+      <div class="big" style="margin-top:14px">Drop. Review.<br><span class="mark">Post.</span></div>
+      <p class="muted" style="max-width:480px;margin:18px auto 0;line-height:1.6">Your voice is cleaned, cuts land between words, and every graphic is real proof: actual headlines and freely licensed photos, with credits. Each reel passes your style guide's Director's review before you see it.</p>
     </div></div>
   </main>
 </div>
@@ -149,11 +182,27 @@
 <script>
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
-let selected = null, current = null, jobsCache = [];
-try { selected = localStorage.getItem('reel.sel'); } catch {}
+let selected = null, current = null, jobsCache = [], tab = 'reels';
+const pref = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
+const setPref = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+selected = pref('reel.sel', null);
 
-const STAGES = [['queued', 'Upload'], ['transcribing', 'Transcribe'], ['planning', 'Plan'], ['review', 'Review'], ['rendering', 'Render'], ['done', 'Done']];
+const STAGES = [['queued', 'Added'], ['transcribing', 'Voice + transcript'], ['planning', 'Plan + proof'], ['review', 'Review'], ['rendering', 'Render'], ['done', 'Done']];
 const LIVE = new Set(['queued', 'transcribing', 'planning', 'rendering']);
+const STATUS_TXT = {approved: 'Approved', delivered: 'Delivered', held: 'Held', skipped: 'Skipped'};
+
+// ---------- segmented controls (remembered)
+function seg(id, key) {
+  const el = $('#' + id), saved = pref(key, null);
+  el.querySelectorAll('button').forEach((b) => {
+    if (saved !== null) b.classList.toggle('on', b.dataset.v === saved);
+    b.onclick = (e) => { e.preventDefault(); el.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); setPref(key, b.dataset.v); };
+  });
+  return () => el.querySelector('button.on').dataset.v;
+}
+const getLook = seg('look', 'reel.look'), getStyle = seg('style', 'reel.style');
+const opts = () => ({notes: $('#notes').value, lang: $('#lang').value, look: getLook(), style: getStyle(),
+  auto: $('#auto').checked ? '1' : '0', fast: $('#mode').value === 'fast' ? '1' : '0'});
 
 // ---------- upload
 const drop = $('#drop'), fileIn = $('#file');
@@ -170,11 +219,11 @@ document.addEventListener('dragover', (e) => e.preventDefault());
 document.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; document.body.classList.remove('dragging'); const f = e.dataTransfer.files[0]; if (f && !drop.contains(e.target)) upload(f); });
 
 let uploadingNow = false;
-function upload(file) {
-  if (uploadingNow) return; // ignore a second drop while one is still uploading
+function upload(file, redo) {
+  if (uploadingNow) return;
   if (!/\.(mp4|mov|m4v|webm)$/i.test(file.name)) { alert('Drop an .mp4, .mov, .m4v or .webm video'); return; }
   uploadingNow = true; selected = null;
-  const q = new URLSearchParams({name: file.name, notes: $('#notes').value, lang: $('#lang').value, auto: $('#auto').checked ? '1' : '0', fast: $('#mode').value === 'fast' ? '1' : '0'});
+  const q = new URLSearchParams({name: file.name, ...opts(), ...(redo ? {redo: '1'} : {})});
   const xhr = new XMLHttpRequest();
   $('#main').innerHTML = `<div class="empty"><div class="card stack" style="width:min(520px,90vw);text-align:left">
     <div class="eyebrow">Uploading</div><h2 style="word-break:break-all">${esc(file.name)}</h2>
@@ -188,18 +237,55 @@ function upload(file) {
   xhr.onload = () => {
     uploadingNow = false; fileIn.value = '';
     const r = JSON.parse(xhr.responseText || '{}');
+    if (r.logged) return showLogged(file, r.logged);
     if (r.slug) {
       $('#notes').value = '';
-      if (r.duplicate) flash('You already uploaded this video — opened the existing reel instead of starting a new one.');
+      if (r.duplicate) flash('You already uploaded this video. Opened the existing reel.');
       select(r.slug); refreshJobs();
     } else { alert(r.error || 'Upload failed'); }
   };
-  xhr.onerror = () => { uploadingNow = false; alert('Upload failed — is the app server running? (double-click Reel Studio.command)'); };
+  xhr.onerror = () => { uploadingNow = false; alert('Upload failed. Is Reel Studio running? (double-click Reel Studio.command)'); };
   xhr.open('PUT', '/api/upload?' + q); xhr.send(file);
 }
 
-// ---------- jobs list
+function showLogged(file, e) {
+  $('#main').innerHTML = `<div class="empty"><div class="card stack" style="width:min(560px,92vw);text-align:left">
+    <div class="eyebrow">Already in your edit log</div>
+    <h2 style="word-break:break-all">${esc(file.name)}</h2>
+    <div><span class="pill ${esc(e.status)}">${esc(STATUS_TXT[e.status] || e.status)}</span>
+      <span class="muted" style="font-size:13px;margin-left:8px">${esc(e.updated || '')}${e.final ? ' · ' + esc(e.final) : ''}</span></div>
+    ${e.note ? `<div class="warn">${esc(e.note)}</div>` : ''}
+    <div class="muted" style="font-size:14px;line-height:1.55">Nothing was started, so no work or credits were spent. Edit it again only if you really want a new version.</div>
+    <div class="row">${e.project ? `<button class="btn primary" id="openprev">Open the existing reel</button>` : ''}<button class="btn" id="redo">Edit it again anyway</button></div>
+  </div></div>`;
+  $('#openprev') && ($('#openprev').onclick = () => select(e.project));
+  $('#redo').onclick = () => upload(file, true);
+}
+
+// ---------- folder import
+$('#folder').value = pref('reel.folder', '');
+$('#importbtn').onclick = async () => {
+  const path = $('#folder').value.trim(); if (!path) return;
+  setPref('reel.folder', path);
+  $('#importbtn').disabled = true; $('#importbtn').textContent = 'Scanning…';
+  const o = opts();
+  const r = await fetch('/api/import', {method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({path, minSec: 30, ...o, auto: o.auto === '1', fast: o.fast === '1'})}).then((x) => x.json()).catch(() => ({error: 'Import failed'}));
+  $('#importbtn').disabled = false; $('#importbtn').textContent = 'Import';
+  if (r.error) return alert(r.error);
+  flash(`${r.queued} queued · ${r.alreadyDone} already done · ${r.tooShort} under 30 s (skipped)`);
+  if (r.first) select(r.first);
+  refreshJobs();
+};
+
+// ---------- sidebar: reels / library
+document.querySelectorAll('[data-tab]').forEach((b) => (b.onclick = () => {
+  tab = b.dataset.tab; document.querySelectorAll('[data-tab]').forEach((x) => x.classList.toggle('on', x === b));
+  refreshJobs(); if (tab === 'library') showLibrary();
+}));
+
 async function refreshJobs() {
+  if (tab === 'library') { $('#jobs').innerHTML = '<div class="muted" style="font-size:13px">Every clip you have given me, and what happened to it. Shown on the right.</div>'; return; }
   try { jobsCache = await (await fetch('/api/jobs')).json(); } catch { return; }
   $('#jobs').innerHTML = jobsCache.length ? jobsCache.map((j) => `
     <div class="job ${j.slug === selected ? 'sel' : ''}" data-slug="${esc(j.slug)}">
@@ -209,16 +295,34 @@ async function refreshJobs() {
   document.querySelectorAll('.job').forEach((el) => (el.onclick = () => select(el.dataset.slug)));
 }
 
+async function showLibrary() {
+  selected = null;
+  let rows = []; try { rows = await (await fetch('/api/log')).json(); } catch {}
+  const counts = rows.reduce((a, r) => ((a[r.status] = (a[r.status] || 0) + 1), a), {});
+  $('#main').innerHTML = `<div class="stack">
+    <div><div class="eyebrow">Library</div><h2 style="margin-top:6px">Edit log</h2>
+      <div class="muted" style="margin-top:8px;font-size:14px">Every raw clip, recognised by its content, so nothing is edited twice. Drop a logged clip again and you'll be asked first.</div></div>
+    <div class="row" style="gap:10px;flex-wrap:wrap">${['approved', 'delivered', 'held', 'skipped'].map((s) => `<span class="pill ${s}">${STATUS_TXT[s]} · ${counts[s] || 0}</span>`).join('')}</div>
+    <div class="card" style="padding:8px 16px"><table class="lib"><tr><th>Status</th><th>Clip</th><th>Final reel</th><th>Why / note</th></tr>
+      ${rows.map((r) => `<tr><td><span class="pill ${esc(r.status)}">${esc(STATUS_TXT[r.status] || r.status)}</span></td>
+        <td><b>${esc(r.name)}</b><div class="muted" style="font-size:11px">${esc(r.folder)}</div></td>
+        <td>${r.project ? `<a href="#" data-open="${esc(r.project)}" style="color:var(--ink)">${esc(r.final || r.project)}</a>` : '<span class="muted">—</span>'}</td>
+        <td class="muted">${esc(r.note || '')}</td></tr>`).join('')}
+    </table></div></div>`;
+  document.querySelectorAll('[data-open]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); $('[data-tab=reels]').click(); select(a.dataset.open); }));
+}
+
 function flash(msg) {
   const el = document.createElement('div');
   el.textContent = msg;
-  el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--carbon);border:1px solid var(--lime);color:#fff;padding:12px 18px;border-radius:8px;z-index:9;font-size:14px;max-width:90vw';
+  el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:10px;z-index:9;font-size:14px;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.2)';
   document.body.appendChild(el); setTimeout(() => el.remove(), 6000);
 }
 
 function select(slug) {
   selected = slug; current = null;
-  try { localStorage.setItem('reel.sel', slug); } catch {}
+  setPref('reel.sel', slug);
+  if (tab !== 'reels') { tab = 'reels'; document.querySelectorAll('[data-tab]').forEach((x) => x.classList.toggle('on', x.dataset.tab === 'reels')); }
   refreshJobs(); refreshJob(true);
 }
 
@@ -248,11 +352,11 @@ function md(src) {
 // ---------- job view
 let lastRenderKey = '';
 async function refreshJob(force) {
-  if (!selected) return;
+  if (!selected || tab !== 'reels') return;
   const want = selected;
   let j; try { const r = await fetch('/api/jobs/' + encodeURIComponent(want)); if (!r.ok) return; j = await r.json(); } catch { return; }
-  if (want !== selected) return; // a newer selection superseded this response
-  const key = JSON.stringify([j.status, j.activity, j.framesVersion, j.latest, (j.revisions || []).length, j.caption, j.brief, (j.log || []).length, j.qa, j.clips]);
+  if (want !== selected) return;
+  const key = JSON.stringify([j.captionStatus, j.status, j.activity, j.framesVersion, j.latest, (j.revisions || []).length, j.caption, j.brief, (j.log || []).length, j.qa, j.clips, j.approved, j.exported, (j.proof || []).length]);
   current = j;
   if (!force && key === lastRenderKey) return;
   lastRenderKey = key;
@@ -263,38 +367,76 @@ function stageIndex(s) { const i = STAGES.findIndex(([k]) => k === s); return i 
 
 function renderJob(j) {
   const draftText = $('#revise') ? $('#revise').value : '';
+  const capDraft = $('#captext') && document.activeElement && document.activeElement.id === 'captext' ? $('#captext').value : null;
   const typing = document.activeElement && document.activeElement.id === 'revise';
   const si = stageIndex(j.status), live = LIVE.has(j.status);
   const canAct = j.status === 'review' || j.status === 'done';
-  const v = Date.now();
+  const enc = encodeURIComponent(j.slug);
   const frames = (j.frames || []).map((f) => `
-    <div class="frame"><img src="/files/${encodeURIComponent(j.slug)}/${f.frame}?v=${j.framesVersion}" alt="Beat ${f.id}">
+    <div class="frame"><img src="/files/${enc}/${f.frame}?v=${j.framesVersion}" alt="Beat ${f.id}">
       <div class="cap"><b>BEAT ${f.id} · ${f.t}s</b>${esc(f.spoken)}</div></div>`).join('');
   const outs = (j.outputs || []).slice().reverse();
+  const tags = [`<span class="pill">${j.look === 'video' ? 'Dark look' : 'Bright Ledger'}</span>`,
+    j.style ? `<span class="pill">Varun Mayya style</span>` : '', j.approved ? `<span class="pill approved">✓ Approved</span>` : ''].join(' ');
   const video = j.latest ? `
     <div class="card stack">
-      <h3 style="margin:0">Your reel</h3>
-      <video controls playsinline src="/files/${encodeURIComponent(j.slug)}/${j.latest}?v=${encodeURIComponent(j.latest)}"></video>
-      <div class="row" style="justify-content:space-between">
-        <a class="btn primary" href="/files/${encodeURIComponent(j.slug)}/${j.latest}?download=1" download>Download MP4</a>
-        <div class="versions">${outs.map((o) => `<a class="${o === j.latest ? 'cur' : ''}" href="/files/${encodeURIComponent(j.slug)}/${o}" target="_blank">${esc(o.split('/').pop().replace(j.slug + '_', ''))}</a>`).join(' · ')}</div>
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Your reel</h3>${j.approved ? '<span class="pill approved">✓ Approved</span>' : ''}</div>
+      <video controls playsinline src="/files/${enc}/${j.latest}?v=${encodeURIComponent(j.latest)}"></video>
+      <div class="row" style="flex-wrap:wrap">
+        ${j.approved ? '' : `<button class="btn good" id="approve" ${j.status === 'done' ? '' : 'disabled'}>✓ Approve reel</button>`}
+        <a class="btn" href="/files/${enc}/${j.latest}?download=1" download>Download MP4</a>
+        <button class="btn ghost" id="reveal">Show in Finder</button>
       </div>
+      ${j.exported ? `<div class="muted" style="font-size:12px;word-break:break-all">Saved to ${esc(j.exported.replace(/^\/Users\/[^/]+/, '~'))}</div>` : ''}
+      ${outs.length > 1 ? `<div class="versions">${outs.map((o) => `<a class="${o === j.latest ? 'cur' : ''}" href="/files/${enc}/${o}" target="_blank">${esc(o.split('/').pop().replace(j.slug + '_', ''))}</a>`).join(' · ')}</div>` : ''}
     </div>` : '';
-  const caption = j.caption ? `
-    <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h3 style="margin:0">Instagram caption</h3>
-      <button class="btn ghost" id="copycap" style="padding:6px 12px;font-size:12px">Copy</button></div>
-      <div class="caption">${esc(j.caption)}</div></div>` : '';
+  const capBusy = j.captionStatus === 'working' || j.captionStatus === 'queued';
+  const capPref = (k, d) => pref('cap.' + k, d);
+  const sel = (id, opts, cur) => `<select id="${id}">${opts.map(([v, t]) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
+  const firstLine = (j.caption || '').split('\n')[0] || '';
+  const caption = (j.frames && j.frames.length) || j.caption || j.latest ? `
+    <div class="card stack" id="capcard">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Instagram caption</h3>
+        ${capBusy ? '<span class="row muted" style="font-size:12px;gap:8px"><span class="spin"></span>Writing…</span>' : j.caption ? '<button class="btn ghost small" id="copycap">Copy</button>' : ''}</div>
+      <div class="row" style="gap:8px;flex-wrap:wrap">
+        <label class="field" style="flex:1;min-width:110px">Tone ${sel('captone', [['direct', 'Direct'], ['story', 'Story'], ['contrarian', 'Contrarian'], ['warm', 'Warm']], capPref('tone', 'direct'))}</label>
+        <label class="field" style="flex:1;min-width:110px">Language ${sel('caplang', [['en', 'English'], ['te-en', 'Telugu + English'], ['te', 'Telugu']], capPref('lang', 'en'))}</label>
+      </div>
+      <div class="row" style="gap:8px;flex-wrap:wrap">
+        <label class="field" style="flex:1;min-width:150px">Call to action ${sel('capcta', [['follow', 'Follow for more'], ['comment', 'Comment a keyword'], ['link', 'Link in bio'], ['whatsapp', 'WhatsApp group'], ['save', 'Save & share']], capPref('cta', 'follow'))}</label>
+        <label class="field" style="width:110px" id="kwwrap">Keyword <input type="text" id="capkw" value="${esc(capPref('kw', 'AI'))}"></label>
+      </div>
+      <input type="text" id="capnote" placeholder="Optional direction, e.g. mention this Sunday's webinar">
+      <button class="btn primary" id="capgen" ${capBusy ? 'disabled' : ''}>${j.caption ? 'Regenerate caption' : 'Generate caption'}</button>
+      ${j.captionStatus === 'error' ? `<div class="warn bad">Couldn't write the caption: ${esc(j.captionError || '')}</div>` : ''}
+      ${j.caption ? `
+        <div class="muted" style="font-size:12px">Shows before “… more”:</div>
+        <div style="font-weight:600;font-size:14px;line-height:1.4">${esc(firstLine.slice(0, 125))}${firstLine.length > 125 ? '<span class="muted"> … more</span>' : ''}</div>
+        <textarea id="captext" rows="10" style="line-height:1.5">${esc(j.caption)}</textarea>
+        <div class="row" style="justify-content:space-between"><span class="muted" style="font-size:12px" id="capcount"></span>
+          <button class="btn small" id="capsave">Save edits</button></div>
+        ${j.captionNotes ? `<div class="warn">${esc(j.captionNotes)}</div>` : ''}` : '<div class="muted" style="font-size:13px">Written from what the reel actually says and shows: transcript, beats, and the real headlines on screen.</div>'}
+    </div>` : '';
+  const proof = (j.proof || []).length ? `
+    <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3 style="margin:0">Proof on screen</h3>
+      <span class="muted" style="font-size:12px">real sources only</span></div>
+      ${j.proof.map((p) => `<div class="proof"><div class="t">${p.t}s</div>
+        ${p.kind === 'headline' ? `<div><div class="hl">${esc(p.text)}</div><div class="meta">${esc(p.meta)}</div></div>`
+          : `${p.kind === 'photo' ? `<img src="/files/${enc}/public/${esc(p.src)}" alt="">` : ''}<div><div style="font-weight:600;font-size:13px">${esc(p.text)}</div><div class="meta">${esc(p.meta || 'Your footage')}</div></div>`}
+      </div>`).join('')}
+    </div>` : '';
   const revs = (j.revisions || []).map((r) => `<div class="warn"><b>“${esc(r.text)}”</b><br><span class="muted">${esc(r.summary || '')}</span></div>`).join('');
 
   $('#main').innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-start;gap:20px">
       <div><div class="eyebrow">Reel</div><h2 style="margin-top:6px">${esc(j.name || j.slug)}</h2>
-        <div class="activity muted" style="margin-top:10px">${live ? '<span class="spin"></span>' : ''}<span>${esc(j.activity || j.status)}${j.status === 'queued' && j.ahead ? ` · ${j.ahead} reel${j.ahead > 1 ? 's' : ''} ahead of you` : ''}</span>
+        <div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">${tags}</div>
+        <div class="activity muted" style="margin-top:10px">${live ? '<span class="spin"></span>' : ''}<span>${esc(j.activity || j.status)}${j.status === 'queued' && j.ahead ? ` · ${j.ahead} reel${j.ahead > 1 ? 's' : ''} ahead` : ''}</span>
         ${j.status === 'rendering' && j.renderStarted ? `<span id="elapsed" data-t="${j.renderStarted}"></span>` : ''}</div></div>
-      <div class="row">${j.cost ? `<span class="muted" style="font-size:12px">Claude: $${j.cost}</span>` : ''}${live ? `<button class="btn ghost" id="cancel" style="padding:6px 12px;font-size:12px">Cancel</button>` : ''}</div>
+      <div class="row">${j.cost ? `<span class="muted" style="font-size:12px">Claude: $${j.cost}</span>` : ''}${live ? `<button class="btn ghost small" id="cancel">Cancel</button>` : ''}</div>
     </div>
     <div class="stages">${STAGES.map(([k, label], i) => `<div class="stage ${i < si || j.status === 'done' ? 'done' : i === si ? 'now' : ''}"><div class="bar"></div><span>${label}</span></div>`).join('')}</div>
-    ${j.status === 'error' ? `<div class="card" style="border-color:#5c2020;margin-bottom:20px"><h3>${j.activity === 'Cancelled' ? 'Cancelled' : 'Something went wrong'}</h3><pre class="log">${esc(j.error || '')}</pre>
+    ${j.status === 'error' ? `<div class="card" style="border-color:#F3C2C2;margin-bottom:20px"><h3>${j.activity === 'Cancelled' ? 'Cancelled' : 'Something went wrong'}</h3><pre class="log">${esc(j.error || '')}</pre>
       <div class="row" style="margin-top:12px"><button class="btn" id="replan">${j.activity === 'Cancelled' ? 'Start planning again' : 'Try planning again'}</button></div></div>` : ''}
 
     <div class="grid2">
@@ -305,72 +447,76 @@ function renderJob(j) {
           <div class="muted" style="line-height:1.55">${esc(j.plan.summary || '')}</div>
           ${j.plan.check ? `<div class="warn"><b>Check before posting:</b> ${esc(j.plan.check)}</div>` : ''}
         </div>` : ''}
-        ${j.qa ? `<div class="card stack">
-          <div class="row" style="justify-content:space-between"><h3 style="margin:0">Quality check</h3>
-            <span class="muted" style="font-size:12px">${j.qa.frames ?? '–'} frames · round ${j.qa.round ?? '–'}</span></div>
-          <div class="row" style="gap:28px">
-            <div><div class="hook" style="color:${j.qa.hard ? '#ff5c5c' : 'var(--lime)'}">${j.qa.hard ?? '–'}</div><div class="muted" style="font-size:12px">measured failures</div></div>
-            <div><div class="hook" style="color:${(j.qa.min ?? 10) < 8 ? '#ff5c5c' : 'var(--lime)'}">${j.qa.min ?? '–'}<span class="muted" style="font-size:16px">/10</span></div><div class="muted" style="font-size:12px">lowest frame</div></div>
-            <div><div class="hook">${j.qa.mean ?? '–'}</div><div class="muted" style="font-size:12px">average</div></div>
-          </div>
-          ${(j.qa.failures || []).map((f) => `<div class="warn">${esc(f.t)}s — ${esc(f.issue)}</div>`).join('')}
-          ${(j.qa.low || []).map((f) => `<div class="warn">Frame ${esc(f.i)} · ${esc(f.score)}/10 — ${esc(f.issue || '')}</div>`).join('')}
-        </div>` : ''}
-        ${j.voice ? `<div class="card stack">
-          <div class="row" style="justify-content:space-between"><h3 style="margin:0">Voice</h3>
-            <span class="muted" style="font-size:12px">background noise removed${j.voice.before.hum_hz?.length ? ' · hum removed' : ''}</span></div>
-          <div class="row" style="gap:28px">
-            <div><div class="hook">${esc(j.voice.grade_before)} → <span style="color:var(--lime)">${esc(j.voice.grade_after)}</span></div><div class="muted" style="font-size:12px">clarity grade</div></div>
-            <div><div class="hook">${j.voice.before.snr_db} → ${j.voice.after.snr_db}<span class="muted" style="font-size:16px"> dB</span></div><div class="muted" style="font-size:12px">voice over background</div></div>
-          </div>
-          ${(j.voice.warnings || []).map((w) => `<div class="warn">${esc(w)}</div>`).join('')}
-        </div>` : ''}
         ${frames ? `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:14px"><h3 style="margin:0">Storyboard</h3><span class="muted" style="font-size:12px">${(j.frames || []).length} beats</span></div><div class="frames">${frames}</div></div>`
-          : live ? `<div class="card"><h3>Storyboard</h3><div class="muted">Claude is working on it — frames appear here when the plan is ready.</div></div>` : ''}
-        ${j.brief ? `<details class="card"><summary>Brief</summary><div class="md">${md(j.brief)}</div></details>` : ''}
-        ${j.storyboard ? `<details class="card"><summary>Beat sheet &amp; retention check</summary><div class="md">${md(j.storyboard)}</div></details>` : ''}
+          : live ? `<div class="card"><h3>Storyboard</h3><div class="muted">Claude is working on it: fact-checking, finding real proof, then the Director's review. Frames appear here when the plan is ready.</div></div>` : ''}
+        <div class="row" style="gap:16px;align-items:stretch;flex-wrap:wrap">
+          ${j.voice ? `<div class="card stack" style="flex:1;min-width:260px">
+            <div class="row" style="justify-content:space-between"><h3 style="margin:0">Voice</h3>
+              <span class="muted" style="font-size:12px">noise removed${j.voice.before.hum_hz?.length ? ' · hum removed' : ''}</span></div>
+            <div class="row" style="gap:24px">
+              <div><div class="big-num">${esc(j.voice.grade_before)} → <span style="color:var(--green)">${esc(j.voice.grade_after)}</span></div><div class="muted" style="font-size:12px">clarity grade</div></div>
+              <div><div class="big-num">${j.voice.after.snr_db}<span class="muted" style="font-size:14px"> dB</span></div><div class="muted" style="font-size:12px">voice over background</div></div>
+            </div>
+            ${(j.voice.warnings || []).map((w) => `<div class="warn">${esc(w)}</div>`).join('')}
+          </div>` : ''}
+          ${j.qa ? `<div class="card stack" style="flex:1;min-width:260px">
+            <div class="row" style="justify-content:space-between"><h3 style="margin:0">Quality check</h3>
+              <span class="muted" style="font-size:12px">${j.qa.frames ?? '–'} frames${j.qa.round ? ' · round ' + j.qa.round : ''}</span></div>
+            <div class="row" style="gap:24px">
+              <div><div class="big-num" style="color:${j.qa.hard ? 'var(--red)' : 'var(--green)'}">${j.qa.hard ?? '–'}</div><div class="muted" style="font-size:12px">hard failures</div></div>
+              ${j.qa.min != null ? `<div><div class="big-num" style="color:${j.qa.min < 8 ? 'var(--red)' : 'var(--green)'}">${j.qa.min}<span class="muted" style="font-size:14px">/10</span></div><div class="muted" style="font-size:12px">lowest frame</div></div>` : ''}
+            </div>
+            ${(j.qa.failures || []).map((f) => `<div class="warn bad">${esc(f.t)}s · ${esc(f.issue)}</div>`).join('')}
+            ${(j.qa.low || []).map((f) => `<div class="warn">Frame ${esc(f.i)} · ${esc(f.score)}/10 · ${esc(f.issue || '')}</div>`).join('')}
+          </div>` : ''}
+        </div>
+        ${j.brief ? `<details class="card"><summary>Brief &amp; creative concept</summary><div class="md">${md(j.brief)}</div></details>` : ''}
+        ${j.storyboard ? `<details class="card"><summary>Beat sheet</summary><div class="md">${md(j.storyboard)}</div></details>` : ''}
         <details class="card"><summary>Activity log</summary><pre class="log">${esc((j.log || []).join('\n'))}</pre></details>
       </div>
 
       <div class="stack">
         ${video}
-        <div class="card stack">
-          <div class="row" style="justify-content:space-between"><h3 style="margin:0">B-roll clips</h3><span class="muted" style="font-size:12px">Flow · Veo · your footage</span></div>
-          <div class="drop" id="clipdrop" style="padding:16px" tabindex="0" role="button" aria-label="Add a b-roll clip">
-            <b style="font-size:14px;margin:0">Drop clips here</b><span class="muted" style="font-size:12px">or click · added before planning = used automatically</span>
-            <input type="file" id="clipfile" accept="video/*,image/*" multiple hidden>
-          </div>
-          <input type="text" id="clipnote" placeholder="Note for Claude, e.g. use when I say EMI">
-          ${(j.clips || []).map((c) => `<div class="row" style="justify-content:space-between;font-size:13px"><span>${esc(c.name)}${c.note ? ` <span class="muted">— ${esc(c.note)}</span>` : ''}</span><span class="muted" style="font-size:11px">${c.used ? 'in edit' : 'new'}</span></div>`).join('')}
-          ${(j.clips || []).some((c) => !c.used) && j.session ? `<button class="btn primary" id="useclips" ${canAct ? '' : 'disabled'}>Re-edit with new clips</button>` : ''}
-        </div>
+        ${caption}
+        ${proof}
         ${j.session ? `<div class="card stack">
           <h3 style="margin:0">Change something</h3>
-          <div class="chips">${['Stronger hook', 'Tighter cut', 'Bigger captions', 'More b-roll', 'Fewer graphics', 'Calmer pace'].map((c) => `<button class="chip" data-chip="${c}">${c}</button>`).join('')}</div>
-          <textarea id="revise" rows="3" placeholder="e.g. Fix beat 6 caption to “EMI పెట్టి ఇల్లు కొను”"></textarea>
+          <div class="chips">${['Stronger hook', 'Tighter cut', 'More real proof', 'Fewer graphics', 'Bigger captions', 'Calmer pace'].map((c) => `<button class="chip" data-chip="${c}">${c}</button>`).join('')}</div>
+          <textarea id="revise" rows="3" placeholder="e.g. Fix the beat 6 caption to “EMI పెట్టి ఇల్లు కొను”"></textarea>
           ${revs}
-          <div class="row"><button class="btn" id="sendrev" ${canAct ? '' : 'disabled'}>Apply change</button></div>
+          <div class="row"><button class="btn primary" id="sendrev" ${canAct ? '' : 'disabled'}>Apply change</button></div>
         </div>` : ''}
+        <div class="card stack">
+          <div class="row" style="justify-content:space-between"><h3 style="margin:0">Your clips</h3><span class="muted" style="font-size:12px">screen recordings · Flow · your footage</span></div>
+          <div class="drop" id="clipdrop" style="padding:14px" tabindex="0" role="button" aria-label="Add your own clip">
+            <b style="font-size:14px;margin:0">Drop clips here</b><span class="muted" style="font-size:12px">Your screen recordings are the strongest proof</span>
+            <input type="file" id="clipfile" accept="video/*,image/*" multiple hidden>
+          </div>
+          <input type="text" id="clipnote" placeholder="When to use it, e.g. when I say automation">
+          ${(j.clips || []).map((c) => `<div class="row" style="justify-content:space-between;font-size:13px"><span>${esc(c.name)}${c.note ? ` <span class="muted">· ${esc(c.note)}</span>` : ''}</span><span class="muted" style="font-size:11px">${c.used ? 'in edit' : 'new'}</span></div>`).join('')}
+          ${(j.clips || []).some((c) => !c.used) && j.session ? `<button class="btn primary" id="useclips" ${canAct ? '' : 'disabled'}>Re-edit with new clips</button>` : ''}
+        </div>
         ${j.frames && j.frames.length ? `<div class="card stack">
           <h3 style="margin:0">Render</h3>
-          <div class="muted" style="font-size:13px">Final ≈ 5–8 min for a 45s reel. Draft is half-res, ~3× faster.</div>
+          <div class="muted" style="font-size:13px">Final takes about 6–10 min for a 45 s reel. A draft is half-res and about 3× faster.</div>
           <div class="row"><button class="btn primary" id="render" ${canAct ? '' : 'disabled'}>Render final</button><button class="btn" id="draft" ${canAct ? '' : 'disabled'}>Draft</button></div>
         </div>` : ''}
-        ${caption}
       </div>
     </div>`;
 
   if ($('#revise') && draftText) { $('#revise').value = draftText; if (typing) $('#revise').focus(); }
-  const post = (a, body) => fetch(`/api/jobs/${encodeURIComponent(j.slug)}/${a}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})}).then(() => { refreshJob(true); refreshJobs(); });
+  const post = (a, body) => fetch(`/api/jobs/${enc}/${a}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})}).then((r) => r.json()).then((r) => { refreshJob(true); refreshJobs(); return r; });
   $('#render') && ($('#render').onclick = () => post('render', {draft: false}));
   $('#draft') && ($('#draft').onclick = () => post('render', {draft: true}));
   $('#replan') && ($('#replan').onclick = () => post('replan'));
+  $('#approve') && ($('#approve').onclick = () => post('approve').then((r) => flash(`Approved. Logged ${r.logged || 0} source clip${r.logged === 1 ? '' : 's'}, so it will never be re-edited by mistake.`)));
+  $('#reveal') && ($('#reveal').onclick = () => post('reveal'));
   const clipDrop = $('#clipdrop'), clipFile = $('#clipfile');
   const sendClips = async (files) => {
     for (const f of files) {
       clipDrop.querySelector('b').textContent = `Adding ${f.name}…`;
       const q = new URLSearchParams({name: f.name, note: $('#clipnote').value});
-      const r = await fetch(`/api/jobs/${encodeURIComponent(j.slug)}/media?${q}`, {method: 'PUT', body: f}).then((x) => x.json()).catch(() => ({error: 'upload failed'}));
+      const r = await fetch(`/api/jobs/${enc}/media?${q}`, {method: 'PUT', body: f}).then((x) => x.json()).catch(() => ({error: 'upload failed'}));
       if (r.error) alert(r.error);
     }
     $('#clipnote').value = ''; lastRenderKey = ''; refreshJob(true);
@@ -386,7 +532,18 @@ function renderJob(j) {
   $('#cancel') && ($('#cancel').onclick = () => { if (confirm('Cancel this reel? Work done so far is kept.')) post('cancel'); });
   $('#sendrev') && ($('#sendrev').onclick = () => { const t = $('#revise').value.trim(); if (t) post('revise', {text: t}); });
   document.querySelectorAll('[data-chip]').forEach((b) => (b.onclick = () => { $('#revise').value = b.dataset.chip; $('#revise').focus(); }));
-  $('#copycap') && ($('#copycap').onclick = async () => { try { await navigator.clipboard.writeText(j.caption); $('#copycap').textContent = 'Copied'; } catch { $('#copycap').textContent = 'Select & copy'; } });
+  if (capDraft !== null && $('#captext')) { $('#captext').value = capDraft; $('#captext').focus(); }
+  const capCount = () => { const t = $('#captext'); if (t && $('#capcount')) { const n = t.value.length; $('#capcount').textContent = `${n} / 2,200 characters`; $('#capcount').style.color = n > 2200 ? 'var(--red)' : ''; } };
+  $('#captext') && ($('#captext').oninput = capCount); capCount();
+  const kwShow = () => { if ($('#kwwrap')) $('#kwwrap').style.display = $('#capcta').value === 'comment' ? '' : 'none'; };
+  $('#capcta') && ($('#capcta').onchange = kwShow); kwShow();
+  $('#capgen') && ($('#capgen').onclick = () => {
+    const o = {tone: $('#captone').value, lang: $('#caplang').value, cta: $('#capcta').value, keyword: $('#capkw').value.trim(), note: $('#capnote').value.trim()};
+    setPref('cap.tone', o.tone); setPref('cap.lang', o.lang); setPref('cap.cta', o.cta); setPref('cap.kw', o.keyword);
+    post('caption', o).then((r) => r && r.error && alert(r.error));
+  });
+  $('#capsave') && ($('#capsave').onclick = () => post('caption-save', {text: $('#captext').value}).then(() => flash('Caption saved.')));
+  $('#copycap') && ($('#copycap').onclick = async () => { const t = $('#captext') ? $('#captext').value : j.caption; try { await navigator.clipboard.writeText(t); $('#copycap').textContent = 'Copied'; } catch { $('#copycap').textContent = 'Select & copy'; } });
 }
 
 setInterval(() => { const e = $('#elapsed'); if (e) { const s = Math.round(Date.now() / 1000 - Number(e.dataset.t)); e.textContent = `· ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; } }, 1000);

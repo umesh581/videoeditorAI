@@ -117,6 +117,43 @@ The owner's brand is `reel_editor/brands/digital-entrepreneur.json` (from their 
 - Avoid stock clichés / posed smiles when picking b-roll.
 Storyboard keys still override brand defaults (e.g. `look.grade`).
 
+## Creative director: balance the four visual layers
+Give every beat ONE job, chosen by what is being said, then check the mix.
+
+| What the line is | Layer | Source |
+|---|---|---|
+| Opinion, story, emotion, punchline, CTA | **Speaker** (full frame, punch-ins) | the footage |
+| A claim, number, trend or named company/person | **Proof** | `news` clipping · `media-commons` photo · owner's screen |
+| A concrete scene the viewer should picture ("I upload the raw file", "salary gets credited", "family dreams", "late nights") | **B-roll** | b-roll agent (library → real → stock → AI) |
+| Structure the ear can't hold: a real number to compare, steps he lists, before vs after | **Motion graphic** | counter / compare / flow / checklist, with real figures only, never restating the sentence |
+
+**Target mix for a 30–60 s reel:**
+- speaker **40–60%**;
+- proof **10–20%**;
+- b-roll **15–30%**;
+- motion graphics **5–15%**, usually 0–2 elements.
+
+**Never** more than two non-speaker beats in a row: return to the face so the viewer stays connected. No layer
+should ever be there just to fill time.
+
+**Shot list for the b-roll agent:**
+1. Write `projects/<slug>/broll_requests.json` with each b-roll shot:
+   - `id`, `beat`, the spoken word it lands `on`;
+   - `kind` (video for action, image for a still concept), `seconds` (2–4);
+   - `need`: what must be VISIBLE, written concretely, including Indian context and warm, bright light;
+   - `purpose`; `real_only` (true when the shot is proof).
+2. Set `budgetCredits`. The default is 250 vidIQ credits per reel, which is two AI clips at the measured 120 credits
+   per 4 s Veo shot. The owner can change it in their notes. Ask for at most 1–2 AI shots per reel, for the moments
+   that need an Indian or specific scene stock can't give. Library and stock (1 credit) cover the rest.
+   Prefer **AI images** (Canva, on the owner's paid plan, with no vidIQ cost) over AI video for still concepts.
+   Use `kind: image` unless motion is the point. Veo video costs 120 credits per 4 s.
+3. Run the **broll-agent** subagent (`Agent` tool, `subagent_type: "broll-agent"`) with the slug.
+4. Place the assets from `broll_manifest.json` as `broll` entries (`mode: "card"` or `"full"`) on their words.
+   Credits print automatically. AI-generated assets are labelled as AI.
+5. When the reel is published with AI-generated footage, remind the owner to turn on Instagram's "AI info" label.
+
+Shots the agent couldn't fill stay as the speaker full-frame. Never replace them with a filler graphic.
+
 ## Named people, companies, places, events: show the real thing
 When the speaker names someone or something specific ("Elon Musk", "Infosys", "Tata", "Narayana Murthy", "the 1991
 reforms"), show it on that word:

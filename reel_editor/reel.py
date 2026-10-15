@@ -13,6 +13,12 @@ B-roll / assets (land in projects/<slug>/public/media/):
   media-shot <slug> <url> [--desktop]              website screenshot for a cards graphic
   news <slug> "claim or topic" [--n 8]              real headlines → news.json, for a clipping graphic
   media-commons <slug> "Elon Musk" [--n 6]          real freely-licensed photos (people, companies, history) with credits
+
+B-roll library (reuse before generating — the b-roll agent's tools):
+  broll-find "what the shot must show" [--kind video|image] [--orientation portrait]   ranked matches + thumbnail sheet
+  broll-save <file|url> --desc "what is visible" --tags a,b --source ai|stock|owner|commons [--model m --prompt p --credit c]
+  broll-use <slug> <id>                             copy a library asset into the project (credit carried over)
+  broll-list                                        everything in the library
   media-list <slug> [--library]                    what's available + thumbnail sheet
 """
 import argparse
@@ -31,6 +37,7 @@ import media
 import qa as qa_mod
 import voice
 import editlog
+import broll_library
 
 ROOT = Path(__file__).resolve().parent
 PROJECTS = ROOT / "projects"
@@ -742,7 +749,7 @@ def resolve(sb, tr, project):
                     f1 = f0 + avail
             rf = r.get("focus", [0.5, 0.5])
             if mode == "card":
-                docks.append([max(0, f0 - 4), f1 - 4])  # card clips live on the canvas; the speaker expands back as the card leaves (no empty canvas)
+                docks.append([max(0, f0 - 4), f1])  # card clips live on the canvas; the speaker expands back the moment the card has left
             broll.append({"src": src, "kind": kind, "from": f0, "to": f1, "clipStart": clip_start, "mode": mode,
                           "speakerTrim": out2src(f0), "focusX": rf[0], "focusY": rf[1],
                           "label": r.get("label"), "credit": info.get("credit") or None})
@@ -833,7 +840,7 @@ def resolve(sb, tr, project):
             if t not in ("logos", "checklist", "flow", "notify", "slam"):
                 add_sfx(t, f0, g.get("sfx"))
             if g.get("dock"):
-                docks.append([max(0, f0 - 4), f1 - 4])  # the speaker expands back while the graphic leaves (no empty canvas)
+                docks.append([max(0, f0 - 4), f1])  # the speaker expands back the moment the graphic has left (no overlap, no empty canvas)
                 if out.get("pos") in (None, "top", "center"):
                     out["pos"] = "canvas"  # docked speaker: graphic lives in the canvas above the window
             out.pop("dock", None)
@@ -1375,6 +1382,40 @@ def cmd_media(a):
         die(str(e))
 
 
+def cmd_broll(a):
+    import urllib.request
+    import tempfile
+    if a.cmd == "broll-find":
+        hits = broll_library.search(a.query, a.kind, a.orientation, a.n)
+        if not hits:
+            print("no matches — the library is empty or nothing is similar: generate or source it")
+            return
+        for sc, e in hits:
+            tag = "REUSE?" if sc >= 0.45 else "weak  " if sc >= 0.2 else "no    "
+            print(f"{tag} {sc:.2f}  {e['id']:<44} {e['kind']:<5} {e['orientation']:<9} {e.get('duration') or '':>5}  "
+                  f"{'AI ' if e['ai'] else ''}{e['description'][:70]}")
+        out = broll_library.sheet([e for _, e in hits], broll_library.LIB / "_last_search.jpg")
+        if out:
+            print(f"look before reusing: {out}")
+    elif a.cmd == "broll-save":
+        src = a.file
+        if src.startswith(("http://", "https://")):
+            ext = Path(src.split("?")[0]).suffix or (".mp4" if a.kind != "image" else ".jpg")
+            tmp = Path(tempfile.mkdtemp()) / f"dl{ext}"
+            req = urllib.request.Request(src, headers={"User-Agent": "ReelEditor/1.0"})
+            tmp.write_bytes(urllib.request.urlopen(req, timeout=300).read())
+            src = str(tmp)
+        e = broll_library.add(src, a.desc, (a.tags or "").split(","), a.source, a.prompt or "", a.model or "", a.credit or "",
+                              ai=a.source == "ai")
+        print(f"saved {e['id']}  ({e['kind']}, {e['orientation']}, {e.get('duration') or 'still'})  → library/broll/{e['file']}")
+    elif a.cmd == "broll-use":
+        name, e = broll_library.use(a.slug, a.id, PROJECTS)
+        print(f"media/{name}  ← library {e['id']}  credit: {e.get('credit') or '(owner footage)'}")
+    else:
+        for e in sorted(broll_library.load().values(), key=lambda e: e["created"], reverse=True):
+            print(f"{e['id']:<44} {e['kind']:<5} {e['source']:<8} used {len(e['used_in'])}×  {e['description'][:70]}")
+
+
 def cmd_log(a):
     rows = sorted(editlog.load().values(), key=lambda e: (e["status"], e["source"]))
     for e in rows:
@@ -1452,6 +1493,26 @@ def main():
     m.add_argument("--library", action="store_true")
     for name in ("media-search", "media-add", "media-url", "media-shot", "media-list", "news", "media-commons"):
         sub.choices[name].set_defaults(fn=cmd_media)
+    m = sub.add_parser("broll-find", help="search the b-roll library before generating anything")
+    m.add_argument("query")
+    m.add_argument("--kind", choices=["video", "image"])
+    m.add_argument("--orientation", choices=["portrait", "landscape", "square"])
+    m.add_argument("--n", type=int, default=6)
+    m = sub.add_parser("broll-save", help="add a found/generated asset to the b-roll library")
+    m.add_argument("file")
+    m.add_argument("--desc", required=True)
+    m.add_argument("--tags", default="")
+    m.add_argument("--source", choices=["ai", "stock", "owner", "commons", "archival"], required=True)
+    m.add_argument("--kind", choices=["video", "image"])
+    m.add_argument("--model")
+    m.add_argument("--prompt")
+    m.add_argument("--credit")
+    m = sub.add_parser("broll-use", help="copy a library asset into a project")
+    m.add_argument("slug")
+    m.add_argument("id")
+    sub.add_parser("broll-list", help="list the b-roll library")
+    for name in ("broll-find", "broll-save", "broll-use", "broll-list"):
+        sub.choices[name].set_defaults(fn=cmd_broll)
     m = sub.add_parser("log", help="edit log: every raw clip and its outcome (approved/delivered/held/skipped)")
     m.add_argument("--status")
     m.set_defaults(fn=cmd_log)

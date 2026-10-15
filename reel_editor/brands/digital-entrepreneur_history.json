@@ -159,5 +159,26 @@
   "treatment": "talking-head",
   "hook": "",
   "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b7",
+  "version": 5,
+  "treatment": "talking-head",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-d1",
+  "version": 1,
+  "treatment": "talking-head+math+proof",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-d1",
+  "version": 2,
+  "treatment": "talking-head+math+proof",
+  "hook": "",
+  "date": "2026-10-15"
  }
 ]

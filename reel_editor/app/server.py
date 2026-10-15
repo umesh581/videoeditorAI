@@ -31,6 +31,9 @@ PROJECTS = EDITOR / "projects"
 INBOX = EDITOR / "inbox"
 VIDEO_EXT = {".mp4", ".mov", ".m4v", ".webm"}
 BRAND = "digital-entrepreneur"
+sys.path.insert(0, str(EDITOR))
+import editlog  # noqa: E402  (edit log: every raw clip by content fingerprint + its outcome)
+STYLES = {"": "Standard brand edit", "varun-mayya": "Varun Mayya documentary"}
 
 ALLOWED_TOOLS = [
     "Bash(python3 reel_editor/reel.py:*)",
@@ -40,6 +43,10 @@ ALLOWED_TOOLS = [
     "Skill",
     "Write(reel_editor/projects/**)",
     "Edit(reel_editor/projects/**)",
+    "Agent(broll-agent)",  # the creative director hands its shot list to the b-roll agent
+    "mcp__af6e248c-7d39-42d6-8d8b-309218f194bc__vidiq_generate_broll",  # used by the b-roll agent when the CLI has the vidIQ connector
+    "mcp__af6e248c-7d39-42d6-8d8b-309218f194bc__vidiq_generate_video",
+    "mcp__af6e248c-7d39-42d6-8d8b-309218f194bc__vidiq_job_poll",
 ]
 
 QA_FULL = """5. Quality loop (skill Step 7): `python3 reel_editor/reel.py qa {slug}` → fix every measured hard failure → Read every qa/sheet*.jpg and score every frame with the rubric → write qa_scores.json → fix → re-run qa. Repeat until 0 hard failures and every frame ≥ 8 (max 2 rounds; then report what is left — the owner decides)."""
@@ -50,12 +57,17 @@ PLAN_PROMPT = """You are editing a reel inside the Reel Studio app. The owner is
 Use the edit-reel skill. The raw clip is already ingested as project `{slug}`:
   reel_editor/projects/{slug}/transcript.txt, transcript.json, contact.jpg (+ contact.txt)
 Language: {lang}. Brand: set "brand": "{brand}" in storyboard.json and follow the brand rules.
+Look: set "brandMode": "{look}" in storyboard.json.{style_line}
+FIRST read reel_editor/brands/{brand}_style.md (the owner's style guide) and obey it, including its Director's review on the rendered frames before you finish.
 {notes}
 {clips}
 Do, in order:
 1. Read the transcript and contact sheet. If the language is not English, write clean `captionText` per beat yourself (Telugu+English as spoken).
 2. Act as creative director: read reel_editor/brands/{brand}_history.json and pick a TREATMENT from the skill's Creative direction table that fits this content and differs from the last two reels (set "treatment" in storyboard.json). Then write reel_editor/projects/{slug}/brief.md (audience, promise, strongest lines, 3 hook options, the one you chose and why, the treatment and why, visual plan).
-3. B-roll: use `python3 reel_editor/reel.py media-list {slug} --library` and add matching library clips; `media-search` only if it works (skip silently if no Pexels key); `media-shot` for any website/product named. Skip b-roll rather than force bad stock.
+3. Proof & real b-roll (never invented graphics):
+   - every claim, number, trend or company in the news → `python3 reel_editor/reel.py news {slug} "<claim>"`, fact-check the headlines, use supporting ones as `clipping` graphics; if coverage contradicts the speaker, put it in "check" instead;
+   - every named person, company, place or historic event → `python3 reel_editor/reel.py media-commons {slug} "<name>"`, look at the sheet, use the best real photo as `card` b-roll (credits print automatically; defamation guard: no recognisable person on negative lines);
+   - library clips via `media-list {slug} --library`; `media-shot` for a named website/product. Leave the speaker full-screen rather than fill with anything fake.
 4. Write reel_editor/projects/{slug}/storyboard.json and run `python3 reel_editor/reel.py build {slug}` until there are no retention warnings.
 {qa_step}
 6. Run `python3 reel_editor/reel.py frames {slug}` (storyboard frames for the app).
@@ -71,6 +83,25 @@ REVISE_PROMPT = """Revision request from the owner in Reel Studio for project `{
 
 Apply it: edit reel_editor/projects/{slug}/storyboard.json (bump "version"), run `python3 reel_editor/reel.py build {slug}` (no retention warnings), {qa_note}, then `python3 reel_editor/reel.py frames {slug}`. Update brief.md / instagram_caption.txt only if the change affects them. Do NOT render.
 Final message ONLY JSON: {{"summary": "<what you changed, one or two sentences>", "check": "<anything to verify, or empty>"}}"""
+
+
+CAPTION_PROMPT = """Write the Instagram caption for the finished reel in project `{slug}` (Digital Entrepreneur brand).
+
+Read what the reel actually says and shows — never invent claims, numbers or promises. Every figure in the caption must appear
+word-for-word in the transcript/captionText or in a headline shown on screen; do NOT add context figures (inflation rates, averages, percentages) from your own knowledge:
+  reel_editor/projects/{slug}/transcript.txt (what was spoken), storyboard.json (captionText per beat = the clean English lines),
+  brief.md if present, and props.json "graphics"/"broll" for the real headlines and photos shown on screen.
+If the ig-caption skill is available, use it; then pass the draft through the ig-human skill if available.
+
+Owner's choices: tone = {tone}; language = {lang}; call to action = {cta}.{extra}
+Rules:
+- Line 1 is the hook that survives the "… more" cut (≤ 125 characters): specific, curiosity or tension, no emoji at the start, not a repeat of the video's first line word-for-word.
+- Then 3–6 short lines of value in the brand voice: direct, precise, warm, no fluff, no hype, no "In today's video".
+- Cite a source in plain words if the reel shows a real headline or number (e.g. "Economic Times reported…").
+- One clear ask that matches the call to action. Never promise earnings or results.
+- End with 3–5 relevant hashtags (mix of niche and broad, Indian audience), on the last line.
+- Total under 2,200 characters. No em dashes.
+Write it to reel_editor/projects/{slug}/instagram_caption.txt (overwrite), then reply ONLY with JSON: {{"first_line": "<line 1>", "notes": "<anything to check, or empty>"}}"""
 
 
 # ---------------------------------------------------------------- job state
@@ -200,7 +231,8 @@ def do_ingest(slug):
     update(slug, status="transcribing", activity="Transcribing + colour grading in parallel…", log="transcription started", t0=time.time())
     grade = json.loads((EDITOR / "brands" / f"{BRAND}.json").read_text()).get("defaults", {}).get("look", {}).get("grade", "natural")
     code, tail = run_logged(slug, [sys.executable, "reel_editor/reel.py", "new", job["raw"], "--name", slug, "--force",
-                                   "--lang", job.get("lang", "auto"), "--pregrade", grade], label="ingest · ")
+                                   "--lang", job.get("lang", "auto"), "--pregrade", grade] + (["--redo"] if job.get("redo") else []),
+                            label="ingest · ")
     if code != 0:
         return update(slug, status="error", activity="Transcription failed", error=tail[-600:])
     lang = (json.loads((PROJECTS / slug / "transcript.json").read_text()).get("language") or "auto")
@@ -223,8 +255,11 @@ def do_plan(slug):
     update(slug, status="planning", activity="Claude is reading your video…", log="planning started")
     notes = f"Owner's notes for this reel: {job['notes']}" if job.get("notes") else ""
     qa_step = (QA_FAST if job.get("fast") else QA_FULL).format(slug=slug)
+    style = job.get("style") or ""
+    style_line = (f' Style reference: set "styleRef": "{style}" and follow reel_editor/brands/presets/{style}.md.' if style else "")
     data, session, err = run_claude(slug, PLAN_PROMPT.format(slug=slug, lang=job.get("lang", "auto"), brand=BRAND, notes=notes,
-                                                             qa_step=qa_step, clips=clips_text(job)))
+                                                             qa_step=qa_step, clips=clips_text(job), look=job.get("look") or "bright",
+                                                             style_line=style_line))
     if err or not (PROJECTS / slug / "storyboard.json").exists():
         return update(slug, status="error", activity="Planning failed", error=err or "no storyboard was written", session=session)
     job = load_job(slug)
@@ -268,6 +303,21 @@ def do_render(slug, draft):
     update(slug, status="done", activity=f"Ready{took}", outputs=outs, latest=out, log=f"rendered {out}{took}")
 
 
+def do_caption(slug, opts):
+    before = (load_job(slug) or {}).get("activity")  # caption runs must not overwrite the reel's own status line
+    update(slug, captionStatus="working", log=f"caption: {opts.get('tone')}, {opts.get('lang')}, {opts.get('cta')}")
+    cta = {"follow": "follow for more", "comment": f"comment the keyword \"{opts.get('keyword') or 'AI'}\" to get the details",
+           "link": "link in bio", "whatsapp": "join the WhatsApp group (link in bio)", "save": "save and share this"}.get(opts.get("cta"), "follow for more")
+    lang = {"en": "English", "te-en": "Telugu + English mix (Telugu words in Telugu script, like the owner speaks)", "te": "Telugu"}.get(opts.get("lang"), "English")
+    extra = f"\nOwner's extra direction: {opts['note']}" if opts.get("note") else ""
+    data, _, err = run_claude(slug, CAPTION_PROMPT.format(slug=slug, tone=opts.get("tone") or "direct", lang=lang, cta=cta, extra=extra))
+    if err or not (PROJECTS / slug / "instagram_caption.txt").exists():
+        return update(slug, captionStatus="error", captionError=(err or "no caption was written")[-300:], activity=before, log="caption failed")
+    job = load_job(slug)
+    update(slug, captionStatus="ready", captionError=None, captionNotes=(data or {}).get("notes"), activity=before,
+           cost=round((job.get("cost") or 0) + ((data or {}).get("cost_usd") or 0), 3), log="caption written")
+
+
 def enqueue(kind, slug, arg):
     PENDING.append(slug)
     WORK.put((kind, slug, arg))
@@ -291,13 +341,52 @@ def worker():
                 do_revise(slug, arg)
             elif kind == "render":
                 do_render(slug, arg.get("draft", False))
+            elif kind == "caption":
+                do_caption(slug, arg or {})
         except Exception as e:  # keep the worker alive; surface the error on the job
-            update(slug, status="error", activity="Unexpected error", error=repr(e))
+            if kind == "caption":
+                update(slug, captionStatus="error", captionError=repr(e))
+            else:
+                update(slug, status="error", activity="Unexpected error", error=repr(e))
         finally:
             CURRENT.update(slug=None, proc=None)
             if (load_job(slug) or {}).get("cancelled"):
                 update(slug, status="error", activity="Cancelled", error="Cancelled by you.")
             WORK.task_done()
+
+
+def settings():
+    f = EDITOR / "settings.json"
+    return json.loads(f.read_text()) if f.exists() else {}
+
+
+def sources_of(slug):
+    """Raw clips behind a project (joined reels list theirs in storyboard "sources")."""
+    d = PROJECTS / slug
+    out = []
+    if (d / "transcript.json").exists():
+        out.append(json.loads((d / "transcript.json").read_text())["meta"].get("original"))
+    if (d / "storyboard.json").exists():
+        out += json.loads((d / "storyboard.json").read_text()).get("sources", [])
+    return [Path(x) for x in out if x and Path(x).exists()]
+
+
+def new_job(name, raw, q):
+    slug = slugify(name)
+    update(slug, name=name, raw=str(raw), size=Path(raw).stat().st_size, status="queued", activity="Waiting to start",
+           created=time.time(), notes=q.get("notes", "").strip(), lang=q.get("lang", "auto"), look=q.get("look", "bright"),
+           style=q.get("style", ""), redo=bool(q.get("redo")), autoRender=bool(q.get("auto")), fast=bool(q.get("fast")),
+           log=f"added {name} ({Path(raw).stat().st_size / 1e6:.1f} MB)")
+    enqueue("ingest", slug, None)
+    return slug
+
+
+def duration(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)], capture_output=True, text=True)
+    try:
+        return float(r.stdout.strip())
+    except ValueError:
+        return 0.0
 
 
 # ---------------------------------------------------------------- http
@@ -321,6 +410,28 @@ def job_view(slug):
                      "min": (sc or {}).get("min"), "mean": (sc or {}).get("mean"), "round": (sc or {}).get("round"),
                      "low": low[:6], "failures": (rep or {}).get("hard_failures", [])[:6]}
     job["voice"] = json.loads(read("voice.json")) if (d / "voice.json").exists() else None
+    if (d / "props.json").exists():
+        pr = json.loads(read("props.json"))
+        fps = pr.get("fps", 30)
+        proof = [{"kind": "headline", "t": round(g["from"] / fps, 1), "text": it["headline"], "meta": f"{it['source']} · {it['date']}"}
+                 for g in pr.get("graphics", []) if g.get("type") == "clipping" for it in g.get("items", [])]
+        idx = json.loads((d / "public" / "media" / "index.json").read_text()) if (d / "public" / "media" / "index.json").exists() else {}
+
+        def credit(r):  # credit line, else where the file came from (Wikimedia, a URL…), else it's the owner's own footage
+            if r.get("credit"):
+                return r["credit"]
+            name = re.sub(r"-(bright|brand|natural|cinematic|warm|moody)-[0-9a-f]{8}(?=\.)", "", Path(r["src"]).name)
+            info = idx.get(Path(name).with_suffix(Path(name).suffix).name) or next((v for k, v in idx.items() if Path(k).stem == Path(name).stem), {})
+            src = info.get("credit") or info.get("source") or ""
+            return "" if src in ("", "local", "library") else src
+        proof += [{"kind": "photo" if Path(r["src"]).suffix.lower() in (".jpg", ".jpeg", ".png", ".webp") else "clip", "t": round(r["from"] / fps, 1),
+                   "src": r["src"], "text": r.get("label") or Path(r["src"]).stem.replace("-", " ")[:60], "meta": credit(r)}
+                  for r in pr.get("broll", [])]
+        job["proof"] = sorted(proof, key=lambda x: x["t"])
+    exp = settings().get("export_dir")
+    if exp and job.get("latest"):
+        f = Path(exp).expanduser() / Path(job["latest"]).name
+        job["exported"] = str(f) if f.exists() else None
     job["queue"] = WORK.qsize()
     job["ahead"] = (PENDING.index(slug) + (1 if CURRENT["slug"] and CURRENT["slug"] != slug else 0)) if slug in PENDING else 0
     job["busyWith"] = CURRENT["slug"] if CURRENT["slug"] != slug else None
@@ -394,6 +505,11 @@ class Handler(BaseHTTPRequestHandler):
                 j = json.loads(p.read_text())
                 jobs.append({k: j.get(k) for k in ("slug", "name", "status", "activity", "created", "latest")})
             return self.send_json(jobs)
+        if parts == ["api", "log"]:
+            rows = sorted(editlog.load().values(), key=lambda e: e.get("updated", ""), reverse=True)
+            return self.send_json([{**e, "name": Path(e["source"]).name, "folder": Path(e["source"]).parent.name} for e in rows])
+        if parts == ["api", "settings"]:
+            return self.send_json({"export_dir": settings().get("export_dir"), "styles": STYLES})
         if len(parts) == 3 and parts[:2] == ["api", "jobs"]:
             j = job_view(parts[2])
             return self.send_json(j) if j else self.send_json({"error": "no such job"}, 404)
@@ -431,9 +547,8 @@ class Handler(BaseHTTPRequestHandler):
                         break
                     left -= len(chunk)
                 return self.send_json({"slug": j["slug"], "duplicate": True})
-        slug = slugify(name)
         INBOX.mkdir(exist_ok=True)
-        raw = INBOX / f"{slug}{Path(name).suffix.lower()}"
+        raw = INBOX / f"{slugify(name)}{Path(name).suffix.lower()}"
         left = int(self.headers.get("Content-Length") or 0)
         with open(raw, "wb") as f:
             while left > 0:
@@ -442,10 +557,12 @@ class Handler(BaseHTTPRequestHandler):
                     break
                 f.write(chunk)
                 left -= len(chunk)
-        update(slug, name=name, raw=str(raw), size=size, status="queued", activity="Uploaded — waiting to start",
-               created=time.time(), notes=q.get("notes", [""])[0].strip(), lang=q.get("lang", ["auto"])[0],
-               autoRender=q.get("auto", ["0"])[0] == "1", fast=q.get("fast", ["0"])[0] == "1", log=f"uploaded {name} ({raw.stat().st_size / 1e6:.1f} MB)")
-        enqueue("ingest", slug, None)
+        one = {k: v[0] for k, v in q.items()}
+        prev = editlog.find(raw)
+        if prev and one.get("redo") != "1":  # already approved / delivered / held / skipped → don't silently redo it
+            raw.unlink()
+            return self.send_json({"logged": prev, "name": name})
+        slug = new_job(name, raw, {**one, "auto": one.get("auto") == "1", "fast": one.get("fast") == "1", "redo": one.get("redo") == "1"})
         self.send_json({"slug": slug})
 
     def add_clip(self, slug, q):
@@ -480,6 +597,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parts = [p for p in urllib.parse.urlparse(self.path).path.strip("/").split("/") if p]
+        if parts == ["api", "import"]:
+            return self.import_folder(self.body_json())
         if len(parts) == 4 and parts[:2] == ["api", "jobs"] and load_job(parts[2]):
             slug, action = parts[2], parts[3]
             data = self.body_json()
@@ -508,12 +627,59 @@ class Handler(BaseHTTPRequestHandler):
                 if CURRENT["slug"] == slug and CURRENT["proc"]:
                     CURRENT["proc"].terminate()
                 return self.send_json({"ok": True})
+            if action == "caption":
+                if not (PROJECTS / slug / "storyboard.json").exists() and not (PROJECTS / slug / "transcript.txt").exists():
+                    return self.send_json({"error": "the video has to be transcribed first"}, 400)
+                update(slug, captionStatus="queued")
+                enqueue("caption", slug, {k: str(v)[:300] for k, v in data.items()})
+                return self.send_json({"ok": True})
+            if action == "caption-save":
+                text = str(data.get("text", ""))[:2400]
+                (PROJECTS / slug / "instagram_caption.txt").write_text(text, encoding="utf-8")
+                update(slug, captionStatus="ready", log="caption edited by you")
+                return self.send_json({"ok": True})
+            if action == "approve":
+                job = load_job(slug)
+                srcs = sources_of(slug) or ([Path(job["raw"])] if job.get("raw") and Path(job["raw"]).exists() else [])
+                for src in srcs:
+                    editlog.record(src, "approved", slug, Path(job.get("latest") or "").name or None, job.get("name", ""))
+                update(slug, approved=True, log="approved by you — logged so it is never re-edited")
+                return self.send_json({"ok": True, "logged": len(srcs)})
+            if action == "reveal":
+                job = load_job(slug)
+                exp = settings().get("export_dir")
+                f = Path(exp).expanduser() / Path(job.get("latest") or "x").name if exp else None
+                target = f if f and f.exists() else (PROJECTS / slug / job["latest"] if job.get("latest") else PROJECTS / slug)
+                subprocess.run(["open", "-R", str(target)])
+                return self.send_json({"ok": True})
             if action == "replan":
                 update(slug, cancelled=False, error=None)
                 enqueue("plan", slug, None)
                 update(slug, status="queued", activity="Re-plan queued")
                 return self.send_json({"ok": True})
         self.send_json({"error": "bad request"}, 400)
+
+
+def _import(self, data):  # bound below as Handler.import_folder
+    folder = Path(str(data.get("path", "")).strip()).expanduser()
+    if not folder.is_dir():
+        return self.send_json({"error": f"Not a folder: {folder}"}, 400)
+    min_s = float(data.get("minSec") or 30)
+    vids = sorted(f for f in folder.rglob("*") if f.suffix.lower() in VIDEO_EXT and f.is_file() and not f.name.startswith("."))
+    queued, done, short = [], [], []
+    for f in vids[:60]:
+        if editlog.find(f):
+            done.append(f.name)
+            continue
+        if duration(f) < min_s:
+            editlog.record(f, "skipped", note=f"under {int(min_s)} s")
+            short.append(f.name)
+            continue
+        queued.append(new_job(f"{f.parent.name[:18]}/{f.name}" if f.parent != folder else f.name, f, data))
+    return self.send_json({"queued": len(queued), "alreadyDone": len(done), "tooShort": len(short), "first": queued[0] if queued else None})
+
+
+Handler.import_folder = _import
 
 
 def main():

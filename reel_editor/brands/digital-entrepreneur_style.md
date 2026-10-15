@@ -59,6 +59,16 @@ anything on this list again.
 - Clean the voice (RNNoise); master to −14 LUFS.
 - Report mic clipping honestly. It can't be undone in the edit.
 
+## Visual balance (creative director)
+- Speaker 40–60%, proof 10–20%, b-roll 15–30%, motion graphics 5–15%. Never more than two non-speaker beats in a row.
+- B-roll comes from the **b-roll agent**, in this order:
+  1. the shared library (`reel.py broll-find`), checked first so nothing is paid for twice;
+  2. real photos or footage;
+  3. stock (1 credit);
+  4. AI image or video, only for generic illustrative scenes, within the per-reel budget.
+- Everything new is saved back to `library/broll/`, described by what's visible.
+- AI never depicts real people or brands, or fakes news or data.
+
 ## Director's review (run on the final frames, every reel, before sending)
 Answer each question honestly from the rendered frames. Fix anything that fails, then re-check.
 1. Pick any graphic. What does the viewer learn from it that the voice didn't say? If the answer is "nothing", delete it.
@@ -68,7 +78,8 @@ Answer each question honestly from the rendered frames. Fix anything that fails,
 5. Does every visual land on the word it belongs to?
 6. Is any dialogue clipped, repeated or cut mid-thought? Listen at every cut.
 7. Is there a moment worth screenshotting (proof, a number, a contrast)? If not, find real material or ask the owner for it.
-8. Would this pass next to the reference reels on the same phone screen? If not, say exactly why. Don't ship it quietly.
+8. Is the visual mix in range (speaker 40–60%, proof, b-roll, graphics), with no more than two non-speaker beats in a row?
+9. Would this pass next to the reference reels on the same phone screen? If not, say exactly why. Don't ship it quietly.
 
 Send only reels that pass. In the message, name anything that needs the owner (missing screen recordings,
 uncertain captions), stated once, with a shot list.

@@ -61,3 +61,19 @@ Preview interactively: `cd remotion && npx remotion studio --props=../projects/<
 - **Edit log:** `reel.py log` / `log-set` record every raw clip by content fingerprint (approved, delivered, held or
   skipped). `new` refuses logged clips unless you pass `--redo`. The log itself (`edit_log.json`) stays local.
 - **Export:** finished reels are also copied to the folder in `settings.json` (`export_dir`).
+- **B-roll agent** (`.claude/agents/broll-agent.md`):
+  - The creative director writes a shot list (`broll_requests.json`).
+  - The agent fills each shot from the cheapest honest source: the shared library (`reel.py broll-find / broll-use`),
+    then real photos and headlines, then vidIQ stock (1 credit), then Canva AI images (owner's plan), then Veo AI video
+    (≈120 vidIQ credits per 4 s).
+  - Every new asset is saved to `library/broll/` (local, git-ignored) with a visual description, so it can be reused.
+  - AI never depicts real people or brands, or fakes news.
+- **Visual balance:** speaker 40–60 %, proof 10–20 %, b-roll 15–30 %, motion graphics 5–15 %, never more than two
+  cutaways in a row. This is enforced in the skill and the Director's review.
+- **Reel Studio:**
+  - bright UI;
+  - look and style switches per upload;
+  - edit-log guard, folder import and Library tab;
+  - Approve button, "Proof on screen" card, Show in Finder;
+  - on-demand Instagram captions (tone, language, call to action), built only from what the reel says and shows.
+
