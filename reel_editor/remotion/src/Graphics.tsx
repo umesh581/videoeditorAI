@@ -4,7 +4,8 @@ import {icons as LUCIDE} from 'lucide-react';
 import type {RGraphic, RIcon} from './types';
 import {useTheme} from './theme';
 import {BESPOKE} from './bespoke';
-import {CanvasBackdrop, DrawLine, EXPO_IN, Kinetic, Mask, ease, useDrift, useInOut} from './motion';
+import {NEWS_SERIF} from './fonts';
+import {BACK_OUT, CanvasBackdrop, DrawLine, EXPO_IN, Kinetic, Mask, ease, useDrift, useInOut} from './motion';
 
 type G<T extends RGraphic['type']> = Extract<RGraphic, {type: T}> & {dur: number};
 
@@ -520,6 +521,99 @@ const EventCard: React.FC<{g: G<'event'>}> = ({g}) => {
   );
 };
 
+
+// ---------------------------------------------------------------- newspaper clipping
+
+const PAPER_NEWS = '#F1ECDF';
+const NEWS_INK = '#161514';
+
+/** Jagged torn-paper outline, deterministic per clipping. */
+const torn = (seed: number) => {
+  const r = (i: number) => (Math.sin(seed * 97.13 + i * 12.9898) * 43758.5453) % 1;
+  const j = (i: number, a: number) => Math.abs(r(i)) * a;
+  const pts: string[] = [];
+  const n = 26;
+  for (let i = 0; i <= n; i++) pts.push(`${(i / n) * 100}% ${j(i, 1.6)}%`);
+  for (let i = 0; i <= n; i++) pts.push(`${100 - j(i + 40, 1.4)}% ${(i / n) * 100}%`);
+  for (let i = n; i >= 0; i--) pts.push(`${(i / n) * 100}% ${100 - j(i + 80, 1.8)}%`);
+  for (let i = n; i >= 0; i--) pts.push(`${j(i + 120, 1.4)}% ${(i / n) * 100}%`);
+  return `polygon(${pts.join(',')})`;
+};
+
+const HeadlineText: React.FC<{text: string; hl?: string | null; at: number}> = ({text, hl, at}) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  if (!hl) return <>{text}</>;
+  const i = text.toLowerCase().indexOf(hl.toLowerCase());
+  const sweep = ease(frame, [at, at + 12], [0, 1]);
+  return (
+    <>
+      {text.slice(0, i)}
+      {/* per-line highlighter: a background that follows every wrapped line of the phrase */}
+      <span style={{backgroundImage: `linear-gradient(${t.colors.accent}, ${t.colors.accent})`, backgroundRepeat: 'no-repeat',
+        backgroundSize: `${sweep * 100}% 72%`, backgroundPosition: '0 85%', WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone',
+        padding: '0 4px', margin: '0 -4px'}}>{text.slice(i, i + hl.length)}</span>
+      {text.slice(i + hl.length)}
+    </>
+  );
+};
+
+const ClippingCard: React.FC<{it: {headline: string; source: string; date: string; highlight?: string | null}; at: number; k: number; dur: number; article?: boolean}> = ({it, at, k, dur, article}) => {
+  const frame = useCurrentFrame();
+  const t = useTheme();
+  const f = frame - at;
+  if (f < 0) return null;
+  const slap = ease(f, [0, 12], [0, 1], BACK_OUT);
+  const out = ease(frame, [dur - 10, dur], [0, 1], EXPO_IN);
+  const rot = article ? 0 : [-2.5, 2.2, -1.2][k % 3];
+  const dx = [0, 26, -20][k % 3], dy = k * 70;
+  const words = it.headline.split(' ').length;
+  const size = words > 14 ? 50 : words > 9 ? 58 : 66;
+  return (
+    <div style={{position: k ? 'absolute' : 'relative', top: k ? dy : undefined, left: k ? dx : undefined, width: 860,
+      transform: article ? `translateY(${(1 - slap) * 70 - out * 40}px) scale(${0.96 + 0.04 * slap})` : `translate(${(1 - slap) * 120 - out * 60}px, ${(1 - slap) * -160 + out * 80}px) rotate(${rot + (1 - slap) * 9}deg) scale(${1 + (1 - slap) * 0.18})`,
+      opacity: Math.min(1, slap * 2) * (1 - out), filter: `drop-shadow(0 ${18 + 10 * (1 - slap)}px 30px rgba(0,0,0,0.45))`}}>
+      <div style={{clipPath: article ? undefined : torn(k + it.headline.length), background: article ? '#FFFFFF' : PAPER_NEWS, borderRadius: article ? 18 : 0, padding: '46px 54px 50px', position: 'relative'}}>
+        {/* newsprint: warm fibre grain + faint yellowing at the edges */}
+        <svg style={{position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: article ? 0 : 0.18, mixBlendMode: 'multiply'}}>
+          <filter id={`fib${k}`}><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed={k + 3} /><feColorMatrix values="0 0 0 0 0.4  0 0 0 0 0.33  0 0 0 0 0.2  0 0 0 1 0" /></filter>
+          <rect width="100%" height="100%" filter={`url(#fib${k})`} />
+        </svg>
+        {!article && <div style={{position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(120,90,40,0.16) 100%)'}} />}
+        <div style={{position: 'relative'}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontFamily: t.body, fontWeight: 700, fontSize: 22,
+            letterSpacing: '0.16em', textTransform: 'uppercase', color: NEWS_INK, opacity: 0.8}}>
+            <span>{it.source}</span><span style={{fontWeight: 500}}>{it.date}</span>
+          </div>
+          <div style={{borderTop: `3px solid ${NEWS_INK}`, borderBottom: `1px solid ${NEWS_INK}`, height: 4, margin: '14px 0 22px', opacity: 0.85}} />
+          <div style={{fontFamily: NEWS_SERIF, fontWeight: 800, fontSize: size, lineHeight: 1.06, letterSpacing: '-0.012em', color: NEWS_INK}}>
+            <HeadlineText text={it.headline} hl={it.highlight} at={at + 14} />
+          </div>
+          {/* body columns, abstract: newsprint texture only, no invented article text */}
+          <div style={{display: 'flex', gap: 22, marginTop: 26, opacity: 0.22}}>
+            {[0, 1, 2].map((c) => (
+              <div key={c} style={{flex: 1, display: 'flex', flexDirection: 'column', gap: 9}}>
+                {[0, 1, 2, 3].map((l) => <div key={l} style={{height: 7, background: NEWS_INK, width: `${l === 3 ? 55 + c * 10 : 100}%`}} />)}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Clipping: React.FC<{g: G<'clipping'>}> = ({g}) => {
+  const step = Math.min(24, Math.max(10, Math.floor(g.dur / (g.items.length + 1))));
+  return (
+    <Region pos={g.pos ?? 'top'}>
+      <div style={{position: 'relative', width: 860}}>
+        {g.items.slice(0, 3).map((it, k) => <ClippingCard key={k} it={it} at={k * step} k={k} dur={g.dur} article={g.look === 'article'} />)}
+      </div>
+    </Region>
+  );
+};
+
 // ---------------------------------------------------------------- layer
 
 const render = (g: RGraphic, dur: number) => {
@@ -529,6 +623,7 @@ const render = (g: RGraphic, dur: number) => {
       const Scene = BESPOKE[g.name];
       return Scene ? <Scene g={p} /> : null;
     }
+    case 'clipping': return <Clipping g={p} />;
     case 'cards': return <Cards g={p} />;
     case 'logos': return <Logos g={p} />;
     case 'counter': return <Counter g={p} />;

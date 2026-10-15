@@ -11,11 +11,15 @@ B-roll / assets (land in projects/<slug>/public/media/):
   media-add <slug> <files...> | --library [match]  your own clips/images (library/ folder)
   media-url <slug> <url> [--name x.mp4]            direct download, e.g. an AI-generated clip
   media-shot <slug> <url> [--desktop]              website screenshot for a cards graphic
+  news <slug> "claim or topic" [--n 8]              real headlines → news.json, for a clipping graphic
+  media-commons <slug> "Elon Musk" [--n 6]          real freely-licensed photos (people, companies, history) with credits
   media-list <slug> [--library]                    what's available + thumbnail sheet
 """
 import argparse
 import json
 import math
+
+import numpy as np
 import os
 import re
 import shutil
@@ -25,6 +29,8 @@ from pathlib import Path
 
 import media
 import qa as qa_mod
+import voice
+import editlog
 
 ROOT = Path(__file__).resolve().parent
 PROJECTS = ROOT / "projects"
@@ -42,6 +48,8 @@ GRADE_LOOK = {  # colour part of each look (applied to speaker footage and b-rol
     "natural": "",
     "cinematic": "colortemperature=temperature=5700:mix=0.55,colorbalance=rs=-0.015:bs=0.025:rh=0.025:bh=-0.02",
     "warm": "colortemperature=temperature=5500:mix=0.65,eq=saturation=1.05",
+    # bright mode: warm, full-colour skin, lifted mids — the airy look of the niche's outlier reels
+    "bright": "colortemperature=temperature=5600:mix=0.45,eq=saturation=1.08:contrast=1.03,curves=all='0/0.02 0.25/0.27 0.5/0.55 0.75/0.79 1/0.99'",
     "moody": "exposure=exposure=-0.1,curves=all='0/0.05 0.5/0.49 1/0.93',colorbalance=rs=-0.05:bs=0.07:rh=0.04:bh=-0.03,eq=saturation=0.88",
     "punchy": "eq=contrast=1.1:saturation=1.18",
     "bw": "hue=s=0,eq=contrast=1.15",
@@ -52,10 +60,10 @@ GRADE_LOOK = {  # colour part of each look (applied to speaker footage and b-rol
 }
 # b-roll overrides: stock footage goes black & white under the brand look (guide: "B&W preferred")
 GRADE_BROLL = {"brand": "hue=s=0,curves=all='0/0 0.15/0.03 0.45/0.4 0.7/0.75 1/0.97',eq=contrast=1.12"}
-GRADE_VIGNETTE = {"brand": "PI/6", "natural": "", "cinematic": "PI/5", "warm": "PI/6", "moody": "PI/4.5", "punchy": "",
+GRADE_VIGNETTE = {"bright": "", "brand": "PI/6", "natural": "", "cinematic": "PI/5", "warm": "PI/6", "moody": "PI/4.5", "punchy": "",
                   "bw": "PI/5", "film": "PI/5"}
 GRADES = set(GRADE_LOOK)
-CAPTION_STYLES = {"premium", "editorial", "kinetic", "bold-pop", "editorial-serif", "minimal", "huge"}
+CAPTION_STYLES = {"premium", "editorial", "kinetic", "bold-pop", "editorial-serif", "minimal", "huge", "pill"}
 EMPHASIS = {"gold", "strike", "big", "color"}
 OVERLAYS = {"hook", "magazine", "title", "label", "cta", "chapter", "statement", "lowerthird"}
 TRANSITIONS = {"cut", "flash", "zoom", "wipe", "whip"}
@@ -266,6 +274,11 @@ def cmd_new(a):
     if not src.exists():
         die(f"{src} not found")
     slug = a.name or slugify(src.stem)
+    prev = editlog.find(src)
+    if prev and not a.redo:
+        die(f"{src.name} is already in the edit log as {prev['status'].upper()}"
+            + (f" (project {prev.get('project')}, final {prev.get('final')})" if prev.get("project") else "")
+            + (f" — {prev['note']}" if prev.get("note") else "") + ". Use --redo to edit it again.")
     d = PROJECTS / slug
     if d.exists() and not a.force:
         die(f"project '{slug}' exists (use --force to redo, or --name)")
@@ -284,6 +297,13 @@ def cmd_new(a):
     meta["source"] = dest.name
     meta["original"] = str(src)
     print(f"[1/3] {src.name}: {fmt(meta['duration'])}, {meta['width']}x{meta['height']} @ {meta['fps']}fps")
+    vrep = None
+    if not a.no_clean:
+        # check the voice and strip background noise before anything else reads the audio
+        meta["source"], vrep = voice.process(d, dest.name)
+        meta["voice"] = {k: vrep[k] for k in ("grade_before", "grade_after", "warnings")}
+        print("      " + voice.summary(vrep))
+        dest = d / "public" / meta["source"]
 
     # colour-grade the master (+ its QA proxy) on a worker thread while whisper transcribes:
     # ffmpeg grading is CPU-bound, whisper runs mostly on the GPU, so they overlap almost perfectly
@@ -310,6 +330,8 @@ def cmd_new(a):
              "# [start-end] phrase   (gaps > 0.35s split lines; times are SOURCE seconds)", ""]
     for p in phrases(words):
         lines.append(f"[{p[0]['start']:7.2f}-{p[-1]['end']:7.2f}] " + " ".join(w["w"] for w in p))
+    if vrep:
+        lines[2:2] = ["# " + voice.summary(vrep).replace("\n      ! ", "\n# ! "), ""]
     lines += ["", "# silences (>0.45s): " + ", ".join(f"{s}-{e}" for s, e in sil)]
     (d / "transcript.txt").write_text("\n".join(lines), encoding="utf-8")
 
@@ -341,13 +363,29 @@ def load(d):
     if not sb_path.exists():
         die(f"{sb_path} missing — write the storyboard first")
     sb = json.loads(sb_path.read_text())
+    orig = json.loads(sb_path.read_text())  # what the storyboard set explicitly
     brand = load_brand(sb.get("brand"))
     for key, val in brand.get("defaults", {}).items():  # storyboard values win over brand defaults
         sb[key] = {**val, **sb.get(key, {})} if isinstance(val, dict) else sb.get(key, val)
+    ref = sb.get("styleRef")
+    if ref:
+        pf = ROOT / "brands" / "presets" / f"{ref}.json"
+        if not pf.exists():
+            die(f"style preset '{ref}' not found in {pf.parent}")
+        for key, val in json.loads(pf.read_text()).get("defaults", {}).items():
+            sb[key] = {**sb.get(key, {}), **val, **orig.get(key, {})} if isinstance(val, dict) else orig.get(key, val)
     theme = brand.get("theme")
-    if theme and brand.get("video") and sb.get("brandMode", "video") == "video":
+    mode = sb.get("brandMode", brand.get("defaultMode", "video"))  # owner chose bright as the default (Oct 2026)
+    if theme and brand.get("video") and mode in ("video", "bright"):
         v = {k: x for k, x in brand["video"].items() if not k.startswith("_")}
         theme = {**theme, **v, "colors": {**theme["colors"], **v.get("colors", {})}, "radius": {**theme["radius"], **v.get("radius", {})}}
+    if theme and mode == "bright" and brand.get("bright"):
+        # bright mode (Bright Ledger): light canvas, warm grade, meaning-coded colours; its defaults beat the brand's
+        v = {k: x for k, x in brand["bright"].items() if not k.startswith("_") and k != "defaults"}
+        theme = {**theme, **v, "colors": {**theme["colors"], **v.get("colors", {})}, "radius": {**theme["radius"], **v.get("radius", {})}}
+        for key, val in brand["bright"].get("defaults", {}).items():
+            if isinstance(val, dict):
+                sb[key] = {**sb.get(key, {}), **val, **orig.get(key, {})}
     sb["_theme"] = theme
     return sb, json.loads((d / "transcript.json").read_text())
 
@@ -407,6 +445,42 @@ def sound_in(a, z, quiet):
     return (z - a) - q
 
 
+class Envelope:
+    """10 ms loudness envelope of the (cleaned) voice — the ground truth for whether a cut point clips speech."""
+    HOP = 0.01
+
+    def __init__(self, wav):
+        x = voice._decode(wav, 16000)
+        n = 160
+        fr = x[: len(x) // n * n].reshape(-1, n)
+        self.db = 20 * np.log10(np.sqrt((fr ** 2).mean(axis=1)) + 1e-9)
+        floor = float(np.percentile(self.db, 10))
+        self.thr = max(floor + 12, -45.0)  # above this = audible voice, not room tone
+
+    def level(self, a, z):
+        i, j = max(0, int(a / self.HOP)), max(int(a / self.HOP) + 1, int(np.ceil(z / self.HOP)))
+        seg = self.db[i:j]
+        return float(seg.max()) if len(seg) else -120.0
+
+    def loud(self, t, side, span=0.03):
+        """Is there voice just outside a cut? side=-1 checks before an in-point, +1 after an out-point."""
+        voice = self.thr + 6  # breaths and room tone sit just above the quiet threshold; syllables sit well above it
+        return self.level(t - span, t) > voice if side < 0 else self.level(t, t + span) > voice
+
+    def dip(self, t, side, reach=0.45):
+        """Nearest safe cut: the closest quiet frame (gap between words) in either direction, ties going the
+        preferred way; if the voice never dips below room tone within reach, the quietest frame nearby."""
+        k = int(t / self.HOP)
+        r = int(reach / self.HOP)
+        quiet = lambda i: 0 <= i < len(self.db) and self.db[i] <= self.thr
+        for step in range(r + 1):
+            for i in ((k + side * step, k - side * step) if step else (k,)):
+                if quiet(i):
+                    return round(i * self.HOP + self.HOP / 2, 3)
+        near = range(max(0, k - r), min(len(self.db), k + r + 1))
+        return round(min(near, key=lambda i: self.db[i]) * self.HOP + self.HOP / 2, 3) if len(near) else t
+
+
 def snap_to_silence(a, z, quiet, total, reach=0.9, pad=0.06):
     """Move a cut point that lands inside sound out to the nearest silence edge (within `reach` seconds):
     in-points move earlier to where the sound starts, out-points later to where it stops."""
@@ -429,11 +503,12 @@ def fix_text(text, corrections):
     return text
 
 
-GRAPHICS = {"bespoke", "cards", "logos", "counter", "checklist", "flow", "notify", "event", "highlight", "compare", "prompt", "slam", "sticker"}
+GRAPHICS = {"bespoke", "clipping", "cards", "logos", "counter", "checklist", "flow", "notify", "event", "highlight", "compare", "prompt", "slam", "sticker"}
 BROLL_MODES = {"full", "pip", "split", "card"}
 SFX_NAMES = {"whoosh", "pop", "ding", "hit", "riser", "click", "type"}
 # default sounds per element: list of (sound, frame offset from the element's start)
 SFX_DEFAULT = {
+    "clipping": [("whoosh", 0), ("hit", 7)],
     "cards": [("whoosh", 0)], "counter": [("riser", 0)], "highlight": [("whoosh", 0)],
     "compare": [("whoosh", 0), ("whoosh", 12)], "prompt": [("type", 6)], "sticker": [("pop", 0)], "event": [("pop", 2)],
     "hook": [("whoosh", 0)], "magazine": [("hit", 0)], "title": [("whoosh", 0)], "label": [("pop", 0)],
@@ -523,6 +598,8 @@ def resolve(sb, tr, project):
         return any(ws < z + pad and we > a - pad for ws, we in spoken)
     pauses = tr.get("pauses", []) if tight["enabled"] else []
     tightened = [0, 0.0]
+    env = Envelope(project / "audio16k.wav")
+    prev_src = None  # (in, out) of the previous beat in storyboard order, after snapping
 
     for i, b in enumerate(sb["beats"]):
         # --- tighten: drop pauses inside the beat (and dead air at its edges) as jump cuts
@@ -530,17 +607,35 @@ def resolve(sb, tr, project):
         # snap to the audio: a beat may only start/end inside measured silence (never mid-sound)
         if not b.get("noSnap"):
             b_in, b_out = snap_to_silence(b_in, b_out, quiet, tr["meta"]["duration"])
+            # words that run together leave no silence: cut at the quietest point between them instead
+            if env.loud(b_in, -1):
+                b_in = env.dip(b_in, -1)
+            if env.loud(b_out, +1):
+                b_out = env.dip(b_out, +1)
+        # a beat that continues the previous one in the source must not replay its tail
+        if prev_src and prev_src[0] < b["in"] and b_in < prev_src[1] <= b["out"]:
+            b_in = prev_src[1]
         for ps, pe in pauses:
-            if ps <= b_in < pe and not speech_in(b["in"], pe - tight["keep"]):
+            # trim dead air at the edges — only if the waveform agrees it's silent (soft syllables fool the pause list)
+            if ps <= b_in < pe and not speech_in(b["in"], pe - tight["keep"]) and env.level(b_in, pe - tight["keep"]) <= env.thr:
                 b_in = max(b_in, pe - tight["keep"])
-            if ps < b_out <= pe and not speech_in(ps + tight["keep"], b["out"]):
+            if ps < b_out <= pe and not speech_in(ps + tight["keep"], b["out"]) and env.level(ps + tight["keep"], b_out) <= env.thr:
                 b_out = min(b_out, ps + tight["keep"])
+        # edge trimming above works from the transcript's pause list; re-check the final edges against the waveform
+        if not b.get("noSnap"):
+            if env.loud(b_in, -1):
+                b_in = env.dip(b_in, -1)
+            if env.loud(b_out, +1):
+                b_out = env.dip(b_out, +1)
+        if prev_src and prev_src[0] < b["in"] and b_in < prev_src[1] <= b["out"]:
+            b_in = prev_src[1]
+        prev_src = (b_in, b_out)
         segs = [[b_in, b_out]]
         if not b.get("noTighten"):
             for ps, pe in pauses:
                 a, z = ps + tight["keep"], pe - tight["keep"]
                 if (pe - ps < tight["minPause"] or z - a < 0.12 or not (b_in < ps and pe < b_out) or speech_in(a, z)
-                        or sound_in(a, z, quiet) > 0.03):
+                        or sound_in(a, z, quiet) > 0.03 or env.level(a, z) > env.thr):
                     continue
                 last = segs[-1]
                 if last[0] < a and z < last[1]:
@@ -647,10 +742,10 @@ def resolve(sb, tr, project):
                     f1 = f0 + avail
             rf = r.get("focus", [0.5, 0.5])
             if mode == "card":
-                docks.append([max(0, f0 - 4), f1 + 8])  # card clips live on the canvas; speaker docks below
+                docks.append([max(0, f0 - 4), f1 - 4])  # card clips live on the canvas; the speaker expands back as the card leaves (no empty canvas)
             broll.append({"src": src, "kind": kind, "from": f0, "to": f1, "clipStart": clip_start, "mode": mode,
                           "speakerTrim": out2src(f0), "focusX": rf[0], "focusY": rf[1],
-                          "label": r.get("label")})
+                          "label": r.get("label"), "credit": info.get("credit") or None})
             add_sfx(mode, f0, r.get("sfx"))
 
         for g in b.get("graphics", []):
@@ -703,6 +798,23 @@ def resolve(sb, tr, project):
                     add_sfx("", w["at"], None if g.get("sfx") is False else "hit")
                 out["words"] = words
                 slam_windows.append((f0, f1))
+            elif t == "clipping":
+                # newspaper clipping: the headline/source/date come ONLY from news.json (fetched with `news`)
+                store = json.loads((project / "news.json").read_text()) if (project / "news.json").exists() else {}
+                ids = g.get("news") if isinstance(g.get("news"), list) else [g.get("news")]
+                out["items"] = []
+                for nid in ids:
+                    if nid not in store:
+                        errs.append(f"{tag}: news id '{nid}' not in news.json — fetch real headlines with `reel.py news {project.name} \"...\"`")
+                        continue
+                    it = {k: store[nid][k] for k in ("headline", "source", "date")}
+                    hl = (g.get("highlight") or {}).get(nid) if isinstance(g.get("highlight"), dict) else g.get("highlight")
+                    if hl and hl.lower() not in it["headline"].lower():
+                        errs.append(f"{tag}: highlight '{hl}' is not in the headline \"{it['headline']}\"")
+                    it["highlight"] = hl if hl and hl.lower() in it["headline"].lower() else None
+                    out["items"].append(it)
+                out.pop("news", None)
+                out.pop("highlight", None)
             elif t == "bespoke":
                 # hand-built hero scene (remotion/src/bespoke/<name>): named cues anchor its moments to speech
                 out["cues"] = {}
@@ -721,7 +833,7 @@ def resolve(sb, tr, project):
             if t not in ("logos", "checklist", "flow", "notify", "slam"):
                 add_sfx(t, f0, g.get("sfx"))
             if g.get("dock"):
-                docks.append([max(0, f0 - 4), f1 + 8])  # graphic exits first, then the speaker expands back
+                docks.append([max(0, f0 - 4), f1 - 4])  # the speaker expands back while the graphic leaves (no empty canvas)
                 if out.get("pos") in (None, "top", "center"):
                     out["pos"] = "canvas"  # docked speaker: graphic lives in the canvas above the window
             out.pop("dock", None)
@@ -757,9 +869,22 @@ def resolve(sb, tr, project):
             f"the edit removes {snd:.2f}s of SOUND at {a0:.2f}–{z0:.2f}s — likely dialogue; "
             + ("tightening cut it" if inside else "widen the neighbouring beat or confirm it's intentional"))
 
+    # cut edges: no cut may start or end on audible voice (catches clipped syllables the gap check is too coarse for)
+    order = sorted(beats, key=lambda x: x["from"])
+    spans = [(x["trimBefore"] / fps, (x["trimBefore"] + x["duration"]) / fps) for x in order]
+    covered = lambda t0, t1: any(a0 <= t0 + 0.005 and t1 - 0.005 <= z0 for a0, z0 in spans)
+    for k, (a0, z0) in enumerate(spans):
+        prev_end = spans[k - 1][1] if k else None
+        nxt_start = spans[k + 1][0] if k + 1 < len(spans) else None
+        if (prev_end is None or abs(prev_end - a0) > 1.5 / fps) and env.loud(a0, -1) and not covered(a0 - 0.03, a0):
+            errs.append(f"a cut at {a0:.2f}s starts mid-word (voice just before it is lost) — move that beat's in earlier")
+        if (nxt_start is None or abs(nxt_start - z0) > 1.5 / fps) and z0 < tr["meta"]["duration"] - 0.05 \
+                and env.loud(z0, +1) and not covered(z0, z0 + 0.03):
+            errs.append(f"a cut at {z0:.2f}s ends mid-word (voice just after it is lost) — move that beat's out later")
+
     # dialogue integrity: a word inside a beat must not be chopped by tightening or beat edges
     for i, b in enumerate(sb["beats"]):
-        segs = [(x["trimBefore"] / fps, (x["trimBefore"] + x["duration"]) / fps) for x in beats if x["group"] == i]
+        segs = [(x["trimBefore"] / fps, (x["trimBefore"] + x["duration"]) / fps) for x in beats]  # all kept audio
         for ws, we in spoken:
             if not (b["in"] <= (ws + we) / 2 < b["out"]) or we - ws <= 0:
                 continue
@@ -768,6 +893,12 @@ def resolve(sb, tr, project):
                 errs.append(f"beat {b.get('id')}: a word at {ws:.2f}s would be cut ({kept:.0%} kept) — move in/out to a word boundary")
     if errs:
         die("storyboard problems:\n  - " + "\n  - ".join(errs))
+
+    # restraint: one graphic at a time (two overlapping read as clutter)
+    gs = sorted(graphics, key=lambda g: g["from"])
+    for x, y in zip(gs, gs[1:]):
+        if y["from"] < x["to"] - 6:
+            warns.append(f"{x['type']} and {y['type']} overlap {(x['to'] - y['from']) / fps:.1f}s at {y['from'] / fps:.1f}s — shorten the first or start the second later")
 
     # full-screen slams replace the captions underneath them
     words_out = [w for w in words_out if not any(a <= w["from"] < z for a, z in slam_windows)]
@@ -838,15 +969,16 @@ def retention(props):
     ev += [(i["at"], f"{g['type']} item") for g in props["graphics"] if g["type"] in ("checklist", "flow", "notify", "slam")
            for i in g.get("items", g.get("words", []))]
     ev += [(o["from"], f"{o['style']} \"{o['text']}\"") for o in props["overlays"]]
+    ev += [(f, f"{g.get('name')} moment") for g in props["graphics"] if g["type"] == "bespoke" for f in g.get("cues", {}).values()]
     ev += [(w["from"], f"emphasis '{w['text']}'") for c in props["chunks"] for w in c["words"] if w.get("emphasis")]
     ev.sort()
     times = sorted({f for f, _ in ev} | {total})
     gaps, last = [], 0
     for t in times:
-        if t - last > 3 * fps:
+        if t - last > 4.5 * fps:  # a talking head can hold 4–5 s; fix gaps with cuts/punch-ins/real footage, never filler graphics
             gaps.append((last / fps, t / fps))
         last = t
-    hook = any(f < 0.6 * fps for f, d in ev if not d.startswith("beat") and not d.startswith("emphasis"))
+    hook = any(f < 0.6 * fps for f, d in ev if not d.startswith("emphasis"))
     return ev, gaps, hook
 
 
@@ -1097,7 +1229,7 @@ def cmd_build(a):
     if not hook:
         print("retention: no hook graphic in the first 0.6s")
     for x, y in dead:
-        print(f"retention: static {y - x:.1f}s at {fmt(x)}–{fmt(y)}")
+        print(f"retention: static {y - x:.1f}s at {fmt(x)}–{fmt(y)} — add a punch-in on a key word, a shot change, or REAL footage; never a graphic just to fill it")
 
 
 def remotion(args):
@@ -1178,6 +1310,18 @@ def cmd_render(a):
          "highpass=f=70,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120:makeup=1.5,"
          "loudnorm=I=-14:TP=-1.5:LRA=9", "-ar", "48000", "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", str(out)])
     raw.unlink()
+    exp = json.loads((ROOT / "settings.json").read_text()).get("export_dir") if (ROOT / "settings.json").exists() else None
+    if exp and not a.draft:
+        dest = Path(exp).expanduser()
+        dest.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(out, dest / out.name)
+        print(f"saved: {dest / out.name}")
+    if not a.draft:
+        orig = json.loads((d / "transcript.json").read_text())["meta"].get("original")
+        for src in [orig] + sb.get("sources", []):  # joined clips list their originals in storyboard "sources"
+            if src and Path(src).exists():
+                prev = editlog.find(src) or {}
+                editlog.record(src, "approved" if prev.get("status") == "approved" else "delivered", a.slug, out.name)
     if sb.get("brand") and not a.draft:
         hist_p = ROOT / "brands" / f"{sb['brand']}_history.json"
         hist = json.loads(hist_p.read_text()) if hist_p.exists() else []
@@ -1212,6 +1356,13 @@ def cmd_media(a):
             got = media.from_url(d, a.url, a.name, source=a.source)
         elif a.cmd == "media-shot":
             got = media.screenshot(d, a.url, a.name, mobile=not a.desktop)
+        elif a.cmd == "media-commons":
+            got = media.commons(d, a.query, n=a.n)
+        elif a.cmd == "news":
+            for nid, it in media.news(d, a.query, n=a.n):
+                print(f"  {nid}  {it['date']:>11}  {it['source'][:22]:<22}  {it['headline']}")
+            print(f"saved to {d / 'news.json'} — use ids in a clipping graphic; check the headlines SUPPORT the spoken claim")
+            return
         else:  # media-list
             idx = media.index(d)
             got = sorted(idx.items())
@@ -1224,6 +1375,19 @@ def cmd_media(a):
         die(str(e))
 
 
+def cmd_log(a):
+    rows = sorted(editlog.load().values(), key=lambda e: (e["status"], e["source"]))
+    for e in rows:
+        if a.status and e["status"] != a.status:
+            continue
+        print(f"{e['status']:<9} {Path(e['source']).name[:42]:<42} {e.get('final', ''):<28} {e.get('note', '')}")
+
+
+def cmd_log_set(a):
+    fp = editlog.record(Path(a.file).expanduser(), a.status, a.project, a.final, a.note)
+    print(f"logged {Path(a.file).name} as {a.status} ({fp})")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -1233,6 +1397,8 @@ def main():
     n.add_argument("--lang", default="auto", help="whisper language code, e.g. en, te, hi, auto")
     n.add_argument("--force", action="store_true")
     n.add_argument("--model", help="whisper model: small | large-v3-turbo | … (default: by language)")
+    n.add_argument("--redo", action="store_true", help="edit a clip even if the edit log says it's done/skipped")
+    n.add_argument("--no-clean", action="store_true", help="skip the voice check / background-noise removal")
     n.add_argument("--pregrade", help="colour-grade the master in parallel with transcription (e.g. brand)")
     n.set_defaults(fn=cmd_new)
     b = sub.add_parser("build")
@@ -1273,11 +1439,29 @@ def main():
     m.add_argument("url")
     m.add_argument("--name")
     m.add_argument("--desktop", action="store_true")
+    m = sub.add_parser("media-commons", help="real freely-licensed photos from Wikimedia Commons (shows credits)")
+    m.add_argument("slug")
+    m.add_argument("query")
+    m.add_argument("--n", type=int, default=6)
+    m = sub.add_parser("news", help="find real published headlines for a claim (for a clipping graphic)")
+    m.add_argument("slug")
+    m.add_argument("query")
+    m.add_argument("--n", type=int, default=8)
     m = sub.add_parser("media-list", help="list project media (+ --library)")
     m.add_argument("slug")
     m.add_argument("--library", action="store_true")
-    for name in ("media-search", "media-add", "media-url", "media-shot", "media-list"):
+    for name in ("media-search", "media-add", "media-url", "media-shot", "media-list", "news", "media-commons"):
         sub.choices[name].set_defaults(fn=cmd_media)
+    m = sub.add_parser("log", help="edit log: every raw clip and its outcome (approved/delivered/held/skipped)")
+    m.add_argument("--status")
+    m.set_defaults(fn=cmd_log)
+    m = sub.add_parser("log-set", help="set a clip's status in the edit log")
+    m.add_argument("file")
+    m.add_argument("status", choices=["approved", "delivered", "held", "skipped"])
+    m.add_argument("--project")
+    m.add_argument("--final")
+    m.add_argument("--note", default="")
+    m.set_defaults(fn=cmd_log_set)
     a = p.parse_args()
     a.fn(a)
 

@@ -238,3 +238,69 @@ def icon(name):
     svg = ROOT / "remotion" / "node_modules" / "simple-icons" / "icons" / f"{hit[0]}.svg"
     m = re.search(r' d="([^"]+)"', svg.read_text()) if svg.exists() else None
     return {"path": m.group(1), "hex": hit[1]} if m else None
+
+
+# ---------------------------------------------------------------- news (clippings)
+
+def news(project: Path, query: str, n=8, region="IN"):
+    """Real headlines for a spoken claim, from Google News RSS. Saved to news.json so a `clipping`
+    graphic can only ever show a headline that was actually published (never an invented one)."""
+    import email.utils
+    import xml.etree.ElementTree as ET
+    q = urllib.parse.quote(query)
+    url = f"https://news.google.com/rss/search?q={q}&hl=en-{region}&gl={region}&ceid={region}:en"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    root = ET.fromstring(urllib.request.urlopen(req, timeout=20).read())
+    p = project / "news.json"
+    store = json.loads(p.read_text()) if p.exists() else {}
+    got = []
+    for it in list(root.iter("item"))[:n]:
+        source = (it.findtext("source") or "").strip()
+        title = (it.findtext("title") or "").strip()
+        if source and title.endswith(f" - {source}"):
+            title = title[: -len(source) - 3].strip()
+        dt = email.utils.parsedate_to_datetime(it.findtext("pubDate"))
+        import hashlib
+        nid = "n" + hashlib.md5(f"{title}|{source}".encode()).hexdigest()[:6]  # stable across runs
+        store[nid] = {"headline": title, "source": source, "date": dt.strftime("%-d %b %Y"),
+                      "iso": dt.date().isoformat(), "link": it.findtext("link"), "query": query}
+        got.append(nid)
+    p.write_text(json.dumps(store, indent=1, ensure_ascii=False))
+    return [(nid, store[nid]) for nid in got]
+
+
+# ---------------------------------------------------------------- Wikimedia Commons (people, companies, places, history)
+
+COMMONS_OK = ("public domain", "no restrictions", "cc0", "pd", "cc by", "godl")  # free to reuse with credit
+
+
+def commons(project: Path, query: str, n=6, width=1600):
+    """Real, freely licensed photos of a person/company/place/event from Wikimedia Commons. Each is saved with its
+    licence and author so cards can show the credit CC BY requires. Never use for anything the speaker didn't name."""
+    import html, re as _re, time
+    ua = {"User-Agent": "ReelEditor/1.0 (personal video editing)"}
+    api = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
+        "action": "query", "format": "json", "generator": "search", "gsrsearch": f"filetype:bitmap {query}", "gsrnamespace": 6,
+        "gsrlimit": n * 3, "prop": "imageinfo", "iiprop": "url|extmetadata|size", "iiurlwidth": width})
+    pages = json.loads(urllib.request.urlopen(urllib.request.Request(api, headers=ua), timeout=30).read()).get("query", {}).get("pages", {})
+    got = []
+    for p in sorted(pages.values(), key=lambda p: p.get("index", 0)):
+        ii = p["imageinfo"][0]; md = ii.get("extmetadata", {})
+        lic = md.get("LicenseShortName", {}).get("value", "")
+        if not any(k in lic.lower() for k in COMMONS_OK) or ii["width"] < 700:
+            continue
+        artist = _re.sub(r"<[^>]+>", "", html.unescape(md.get("Artist", {}).get("value", ""))).strip()[:60]
+        name = _safe("wm-" + _re.sub(r"\.\w+$", "", p["title"][5:])[:44] + f"-{p['pageid']}") + ".jpg"  # pageid: no collisions
+        dest = media_dir(project) / name
+        for attempt in range(3):  # Commons rate-limits bursts
+            try:
+                _download(ii.get("thumburl") or ii["url"], dest, headers=ua); break
+            except Exception:
+                time.sleep(4 * (attempt + 1))
+        else:
+            continue
+        credit = f"Photo: {artist + ', ' if artist else ''}{lic} via Wikimedia Commons"
+        got.append((name, register(project, dest, f"commons: {p['title'][5:]}", credit)))
+        if len(got) >= n:
+            break
+    return got

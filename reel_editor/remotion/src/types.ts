@@ -2,7 +2,7 @@
 // everything here is already in OUTPUT frames, so the components never do timeline math.
 
 export type Grade = 'natural' | 'warm' | 'moody' | 'punchy' | 'bw' | 'film';
-export type CaptionStyle = 'premium' | 'editorial' | 'kinetic' | 'bold-pop' | 'editorial-serif' | 'minimal' | 'huge';
+export type CaptionStyle = 'premium' | 'editorial' | 'kinetic' | 'bold-pop' | 'editorial-serif' | 'minimal' | 'huge' | 'pill';
 export type EmphasisStyle = 'gold' | 'strike' | 'big' | 'color';
 export type OverlayStyle = 'hook' | 'magazine' | 'title' | 'label' | 'cta' | 'chapter' | 'statement' | 'lowerthird';
 export type Transition = 'cut' | 'flash' | 'zoom' | 'wipe' | 'whip';
@@ -66,6 +66,7 @@ export interface RIcon {
 // Graphics are a tagged union; `from`/`to` are output frames, `items[].at` is output frames too.
 export type RGraphic = {from: number; to: number; pos?: 'top' | 'center' | 'bottom' | 'canvas'} & (
   | {type: 'bespoke'; name: string; scene?: string; cues: Record<string, number>; [k: string]: unknown}
+  | {type: 'clipping'; look?: 'newsprint' | 'article'; items: {headline: string; source: string; date: string; highlight?: string | null}[]}
   | {type: 'cards'; images: string[]; frame?: 'plain' | 'browser' | 'phone'; caption?: string}
   | {type: 'logos'; items: RIcon[]; title?: string}
   | {type: 'counter'; value: number; prefix?: string; suffix?: string; label?: string; decimals?: number}
@@ -99,7 +100,7 @@ export interface ReelProps {
   height: number;
   durationInFrames: number;
   src: string; // path under public/
-  look: {grade: Grade; vignette: number; grain: boolean; push: boolean; fit: 'cover' | 'blur'; letterbox?: boolean | number; dockStyle?: 'bottom' | 'top'};
+  look: {grade: Grade; vignette: number; grain: boolean; push: boolean; fit: 'cover' | 'blur'; letterbox?: boolean | number; dockStyle?: 'bottom' | 'top'; dockRect?: {x: number; y: number; w: number; h: number; r: number}; dockFrame?: {x: number; y: number; zoom: number}; captionUndocked?: number};
   captions: {
     enabled: boolean;
     style: CaptionStyle;

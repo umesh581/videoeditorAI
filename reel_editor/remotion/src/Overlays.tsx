@@ -184,7 +184,7 @@ const LowerThird: React.FC<{o: ROverlay}> = ({o}) => {
     <div style={{position: 'absolute', left: 72, bottom: ad ? '44%' : '36%', display: 'flex', gap: 22, alignItems: 'stretch'}}>
       <DrawLine start={0} end={dur} width={8} height={120} style={{transformOrigin: 'top', transform: undefined}} />
       <div>
-        <div style={{fontFamily: t.display, fontWeight: t.weights.display, fontSize: 54, color: t.colors.text, letterSpacing: '-0.03em'}}><Mask start={4} end={dur}>{o.text}</Mask></div>
+        <div style={{fontFamily: t.display, fontWeight: t.weights.display, fontSize: 54, color: t.light ? '#FFFFFF' : t.colors.text, letterSpacing: '-0.03em'}}><Mask start={4} end={dur}>{o.text}</Mask></div>
         {o.sub && <div style={{fontFamily: t.body, fontWeight: t.weights.label, fontSize: 30, letterSpacing: '0.12em', textTransform: 'uppercase', color: t.colors.accent, marginTop: 6}}><Mask start={9} end={dur}>{o.sub}</Mask></div>}
       </div>
     </div>

@@ -47,5 +47,117 @@
   "treatment": "bespoke:payslip",
   "hook": "",
   "date": "2026-10-14"
+ },
+ {
+  "slug": "reeleditor",
+  "version": 1,
+  "treatment": "bespoke:editlog",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "reeleditor",
+  "version": 1,
+  "treatment": "bespoke:editlog",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "reeleditor",
+  "version": 1,
+  "treatment": "bespoke:editlog",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "ambitionsalar-2-bright",
+  "version": 1,
+  "treatment": "bespoke:payslip",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b1",
+  "version": 1,
+  "treatment": "bespoke:timecard",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b7",
+  "version": 1,
+  "treatment": "bespoke:handover",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b8",
+  "version": 1,
+  "treatment": "bespoke:week",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b1",
+  "version": 2,
+  "treatment": "archival-rhyme",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b7",
+  "version": 2,
+  "treatment": "talking-head",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b8",
+  "version": 2,
+  "treatment": "talking-head+proof",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-positive",
+  "version": 2,
+  "treatment": "talking-head+proof",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b1",
+  "version": 3,
+  "treatment": "archival-rhyme",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-positive",
+  "version": 3,
+  "treatment": "talking-head+proof",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b1",
+  "version": 4,
+  "treatment": "archival-rhyme",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b7",
+  "version": 3,
+  "treatment": "talking-head",
+  "hook": "",
+  "date": "2026-10-15"
+ },
+ {
+  "slug": "vq-b7",
+  "version": 4,
+  "treatment": "talking-head",
+  "hook": "",
+  "date": "2026-10-15"
  }
 ]

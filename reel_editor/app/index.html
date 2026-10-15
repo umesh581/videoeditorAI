@@ -316,6 +316,15 @@ function renderJob(j) {
           ${(j.qa.failures || []).map((f) => `<div class="warn">${esc(f.t)}s — ${esc(f.issue)}</div>`).join('')}
           ${(j.qa.low || []).map((f) => `<div class="warn">Frame ${esc(f.i)} · ${esc(f.score)}/10 — ${esc(f.issue || '')}</div>`).join('')}
         </div>` : ''}
+        ${j.voice ? `<div class="card stack">
+          <div class="row" style="justify-content:space-between"><h3 style="margin:0">Voice</h3>
+            <span class="muted" style="font-size:12px">background noise removed${j.voice.before.hum_hz?.length ? ' · hum removed' : ''}</span></div>
+          <div class="row" style="gap:28px">
+            <div><div class="hook">${esc(j.voice.grade_before)} → <span style="color:var(--lime)">${esc(j.voice.grade_after)}</span></div><div class="muted" style="font-size:12px">clarity grade</div></div>
+            <div><div class="hook">${j.voice.before.snr_db} → ${j.voice.after.snr_db}<span class="muted" style="font-size:16px"> dB</span></div><div class="muted" style="font-size:12px">voice over background</div></div>
+          </div>
+          ${(j.voice.warnings || []).map((w) => `<div class="warn">${esc(w)}</div>`).join('')}
+        </div>` : ''}
         ${frames ? `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:14px"><h3 style="margin:0">Storyboard</h3><span class="muted" style="font-size:12px">${(j.frames || []).length} beats</span></div><div class="frames">${frames}</div></div>`
           : live ? `<div class="card"><h3>Storyboard</h3><div class="muted">Claude is working on it — frames appear here when the plan is ready.</div></div>` : ''}
         ${j.brief ? `<details class="card"><summary>Brief</summary><div class="md">${md(j.brief)}</div></details>` : ''}

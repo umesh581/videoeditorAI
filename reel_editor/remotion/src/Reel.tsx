@@ -72,7 +72,7 @@ const BeatClip: React.FC<{
   const flash = beat.transition === 'flash' ? interpolate(frame, [0, 5], [0.9, 0], {extrapolateRight: 'clamp'}) : 0;
   const trim = {trimBefore: beat.trimBefore, trimAfter: beat.trimBefore + beat.duration};
   const th = useTheme();
-  const R = dockRect(th.placement, th.dockStyle);
+  const R = dockRect(th.placement, th.dockStyle, th.dockRect);
   const box: React.CSSProperties = {
     position: 'absolute',
     left: R.x * width * d,
@@ -81,9 +81,19 @@ const BeatClip: React.FC<{
     height: height * (1 - (1 - R.h) * d),
     borderRadius: R.r * d,
     overflow: 'hidden',
-    outline: d > 0.02 ? `2px solid rgba(255,255,255,${0.12 * d})` : undefined,
+    outline: d > 0.02 ? (th.light ? undefined : `2px solid rgba(255,255,255,${0.12 * d})`) : undefined,
+    boxShadow: d > 0.02 && th.light ? `0 24px 60px rgba(60,45,20,${0.28 * d}), 0 0 0 1px rgba(17,17,17,${0.06 * d})` : undefined,
     filter: whip > 0.02 ? `url(#whip${beat.from})` : undefined,
   };
+  // custom docked framing (e.g. a face-cam bubble inside screen footage): centre source point F, zoomed
+  const F = th.dockFrame;
+  let frameDocked: React.CSSProperties = {};
+  if (F && d > 0) {
+    const bw = width * (1 - (1 - R.w) * d), bh = height * (1 - (1 - R.h) * d);
+    const k = Math.min(1, d);
+    const vw = bw * (1 + (F.zoom - 1) * k), vh = vw * height / width;
+    frameDocked = {inset: 'auto', width: vw, height: vh, left: (bw / 2 - F.x * vw) * k, top: (bh / 2 - F.y * vh) * k};
+  }
   return (
     <AbsoluteFill>
       {whip > 0.02 && (
@@ -106,6 +116,7 @@ const BeatClip: React.FC<{
             inset: 0,
             width: '100%',
             height: '100%',
+            ...frameDocked,
             objectFit: fit === 'blur' ? 'contain' : 'cover',
             objectPosition: `${beat.focusX * 100}% ${(beat.focusY * (1 - d) + 0.36 * d) * 100}%`,
             transform: `translateX(${shiftX}%) scale(${scale})`,
@@ -195,8 +206,8 @@ export const Reel: React.FC<ReelProps> = (p) => {
   const qaFrame = useCurrentFrame();
   const duck = useDucking(p.chunks, p.music?.volume ?? 0.1);
   const theme = React.useMemo(
-    () => makeTheme({...(p.qa?.variant === 'overlay' ? {...p.theme, scrim: 0, noScrims: true} : p.theme), placement: p.placement ?? 'organic', dockStyle: p.look.dockStyle ?? 'bottom'}),
-    [p.theme, p.qa?.variant, p.placement, p.look.dockStyle],
+    () => makeTheme({...(p.qa?.variant === 'overlay' ? {...p.theme, scrim: 0, noScrims: true} : p.theme), placement: p.placement ?? 'organic', dockStyle: p.look.dockStyle ?? 'bottom', dockRect: p.look.dockRect, dockFrame: p.look.dockFrame, captionUndocked: p.look.captionUndocked}),
+    [p.theme, p.qa?.variant, p.placement, p.look.dockStyle, p.look.dockRect, p.look.dockFrame, p.look.captionUndocked],
   );
   return (
     <ThemeContext.Provider value={theme}>

@@ -1,0 +1,8 @@
+{
+  "_source": "Reverse-engineered from 5 @thevarunmayya reels (DZYMtCJzy-1, DZfWwHOzLqX, DZf38CCTuki, DZVjiBxzhjU, DYhGMZZBflJ), Oct 2026. Full rules: brands/presets/varun-mayya.md",
+  "defaults": {
+    "captions": {"style": "pill", "size": 1.0, "position": "lower", "wordsPerChunk": 3},
+    "look": {"dockRect": {"x": 0, "y": 0.5, "w": 1, "h": 0.5, "r": 0}, "push": false},
+    "sfx": {"enabled": true, "volume": 0.22}
+  }
+}

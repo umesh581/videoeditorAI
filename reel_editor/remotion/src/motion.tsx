@@ -129,8 +129,7 @@ export const DrawLine: React.FC<{start: number; len?: number; end?: number; widt
 };
 
 /** Brand 12-column grid that draws in behind full-screen cards (Layout & Grid page of the guidelines). */
-export const GridBackdrop: React.FC<{start?: number; opacity?: number; cols?: number}> = ({start = 0, opacity = 0.5, cols = 12}) => {
-  const line = 'rgba(255,255,255,0.09)';
+export const GridBackdrop: React.FC<{start?: number; opacity?: number; cols?: number; line?: string}> = ({start = 0, opacity = 0.5, cols = 12, line = 'rgba(255,255,255,0.09)'}) => {
   const frame = useCurrentFrame();
   return (
     <div style={{position: 'absolute', inset: 0, opacity}}>
@@ -160,8 +159,8 @@ export const DOCK_RECT = {x: 0.04, y: 0.555, w: 0.92, h: 0.37, r: 28};
 // Meta ads: the window runs down under the ad's CTA/primary-text area (footage is fine there, text isn't)
 export const DOCK_RECT_AD = {x: 0.04, y: 0.425, w: 0.92, h: 0.545, r: 28}; // footage may sit under Meta's overlay; text may not
 export const DOCK_RECT_TOP = {x: 0, y: 0, w: 1, h: 0.56, r: 0}; // podcast clip layout
-export const dockRect = (placement?: string, style?: string) =>
-  style === 'top' ? DOCK_RECT_TOP : placement === 'meta-ad' ? DOCK_RECT_AD : DOCK_RECT;
+export const dockRect = (placement?: string, style?: string, custom?: {x: number; y: number; w: number; h: number; r: number}) =>
+  custom ? custom : style === 'top' ? DOCK_RECT_TOP : placement === 'meta-ad' ? DOCK_RECT_AD : DOCK_RECT;
 export const dockAmount = (docks: [number, number][] | undefined, f: number) => {
   let d = 0;
   for (const [a, z] of docks ?? []) {
@@ -177,6 +176,18 @@ export const dockAmount = (docks: [number, number][] | undefined, f: number) => 
 export const CanvasBackdrop: React.FC<{start?: number}> = ({start = -60}) => {
   const t = useTheme();
   const frame = useCurrentFrame();
+  if (t.light) {
+    // bright mode: warm white, a soft daylight bloom and a faint ink grid
+    const drift = Math.sin(frame / 90) * 4;
+    return (
+      <div style={{position: 'absolute', inset: 0, background: t.colors.bg, overflow: 'hidden'}}>
+        <div style={{position: 'absolute', inset: 0, background: `radial-gradient(ellipse 90% 55% at ${50 + drift}% 10%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 70%)`}} />
+        <div style={{position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 40% at 50% 100%, rgba(232,220,196,0.55) 0%, rgba(232,220,196,0) 70%)'}} />
+        <GridBackdrop start={start} opacity={0.6} line="rgba(17,17,17,0.06)" />
+        <Grain amount={(t.grain ?? 0.03) * 0.6} />
+      </div>
+    );
+  }
   if (t.canvas !== 'lit') return <GridBackdrop start={start} opacity={0.9} />;
   const a = t.colors.accent;
   const hex = (x: string) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16)).join(',');

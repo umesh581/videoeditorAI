@@ -5,6 +5,10 @@ description: Edit a raw talking-head or screen-recording clip into a finished, h
 
 # Edit a reel
 
+> **Read `reel_editor/brands/digital-entrepreneur_style.md` first, every time.** It is the owner's style guide, distilled
+> from their 12 reference reels and every correction they have made. Every reel must pass its **Director's review** on
+> the rendered frames before the owner sees it. The owner should never have to babysit the edit or repeat a correction.
+
 You are the **editor and the strategist**, not a caption machine. A reel that only has captions has failed this skill. The pipeline lives in `reel_editor/` (repo root); you write `storyboard.json` and the tool renders it with Remotion.
 
 ```
@@ -22,6 +26,16 @@ python3 reel_editor/reel.py media-list <slug> [--library]                    # +
 Render speed on the M1: ~8s per output second with graphics; `--draft` is ~3× faster.
 
 ---
+
+## Step 0: check the edit log (never redo finished work)
+- Run `python3 reel_editor/reel.py log` first.
+- Every raw clip ever handled is listed by content fingerprint, so renamed or moved copies are recognised. Each has a
+  status: approved / delivered / held / skipped, with the reason.
+- `new` refuses a logged clip unless you pass `--redo`. Only use `--redo` when the owner explicitly asks to re-edit it.
+- For a folder of clips, skip everything already logged and report it in one line ("12 already done/skipped").
+- Final renders log themselves as delivered.
+- When the owner approves a reel, run `reel.py log-set <raw file> approved --note "<title>"`.
+- When you skip or hold a clip, log why: `log-set <file> skipped --note "<reason>"`, or `held` with what's needed from the owner.
 
 ## Step 1 — Ingest and actually understand the video
 `new` the clip, then read `transcript.txt` and look at `contact.jpg` (`contact.txt` gives tile timing). Then write `projects/<slug>/brief.md`:
@@ -94,12 +108,60 @@ Captions: `premium` (default — Manrope, karaoke highlight, clean) · `bold-pop
 Density guide for a 30s reel: 1 slam or hook, 3–6 graphics, 3–6 b-roll inserts, 1 CTA. Don't stack two centre graphics at once; one idea on screen at a time.
 
 ## Brand
+**Default look is Bright Ledger** (`brandMode: "bright"`, the brand's `defaultMode`): warm-white canvas, warm full-colour grade, green = right/gain, red = wrong/limit, gold = ₹ amounts, lime ONLY as a highlighter. The owner prefers bright over dark; no letterbox, no B&W beats unless asked. Use `"brandMode": "video"` only if the owner asks for the dark look.
+
 The owner's brand is `reel_editor/brands/digital-entrepreneur.json` (from their brand guidelines PDF). **Always set `"brand": "digital-entrepreneur"`** in storyboard.json unless told otherwise; it supplies colours (Digital Lime #D4FF33 accent on black), fonts (Plus Jakarta Sans + Inter), flat bordered cards, line icons, the `brand` grade (desaturated, deep blacks; b-roll in B&W) and caption defaults. Follow its `rules` list, especially:
 - Lime ≤10% of any frame — don't add lime colour props; the theme handles accent placement.
 - Stickers use `"icon": "<lucide-name>"` (e.g. graduation-cap, house, car, trending-down, indian-rupee, briefcase, brain, target), never emoji — `build` rejects emoji.
 - On-screen copy follows the brand voice: direct, precise, specific numbers, no fluff, no emoji.
 - Avoid stock clichés / posed smiles when picking b-roll.
 Storyboard keys still override brand defaults (e.g. `look.grade`).
+
+## Named people, companies, places, events: show the real thing
+When the speaker names someone or something specific ("Elon Musk", "Infosys", "Tata", "Narayana Murthy", "the 1991
+reforms"), show it on that word:
+- `python3 reel_editor/reel.py media-commons <slug> "<name>" --n 4`: real, freely licensed photos from Wikimedia Commons.
+  Look at media_sheet.jpg and pick the best one. It plays as a `card` b-roll (1.5–3 s) with its licence credit printed
+  under it automatically. Public-domain and CC BY/BY-SA photos are fine, and the credit line satisfies attribution.
+- Pair it with a real headline (`news`) when the line is about something they did.
+- Video clips of them (keynotes, interviews) are only used if the owner supplies the files. Never rip them from
+  YouTube or Instagram.
+- Never use a photo of a person the speaker didn't name, and never imply someone endorses the owner.
+- **Defamation guard:** when the line is negative ("scam", "fraud", "keeps you broke"), show only unidentifiable
+  crowds, places or objects, never a recognisable real person or brand the speaker didn't explicitly name as the subject.
+
+## News clippings (when the speaker cites news, a company, a trend or a statistic)
+When a line refers to something reported — "Infosys is firing people", "AI jobs pay more", "TCS froze hiring" — show the
+real headline as a newspaper clipping:
+1. `python3 reel_editor/reel.py news <slug> "<the claim, in plain words>"` → real headlines (Google News) with ids, saved to news.json.
+2. **Fact-check before using one.** Read the headlines: do they SUPPORT what the speaker says? If coverage contradicts the
+   claim (e.g. Infosys publicly ruled out layoffs), do NOT show a clipping for it — put it in brief.md under
+   "Check before posting" with the contradicting headline, source and date, and tell the owner. Never soften or reword a
+   headline to fit the script. Prefer the most recent, most credible source (business dailies over aggregators/LinkedIn).
+3. Graphic: `{"type": "clipping", "news": ["n83ff6c"], "highlight": "38% salary premium", "dock": true, "on": "<word>", "dur": 2.6}`
+   — up to 3 ids stack as a pile (use for "everyone is reporting it"); `highlight` must be an exact phrase from the headline
+   (string, or `{id: phrase}` for several). Give it ≥2.5s with nothing else on screen.
+The headline, source and date can only come from news.json — `build` rejects unknown ids, so a clipping can never be
+invented. Never make a clipping that imitates a publication's masthead/logo; ours shows the source name as a citation.
+
+## Style references
+- `"styleRef": "varun-mayya"`: documentary edit. The speaker anchors, and real evidence (articles with marker
+  highlights, product UI, footage) fills the screen. There's a 50/50 split hook, pill captions and hard cuts. Read
+  `reel_editor/brands/presets/varun-mayya.md` and follow it, including its Director's review additions. Use clippings
+  with `"look": "article"` in this style.
+
+## No filler graphics (owner's hardest rule — rejected "Built for factories" for this, Oct 2026)
+The speaker IS the content. Default to the speaker full-frame with captions, jump cuts and punch-ins. A graphic, prop or
+card is allowed ONLY if it shows something the voice cannot: **proof** (a real headline via `news`, a real number with a
+source, a real screenshot/screen recording), **a real artifact** (archival photo, the actual product UI, a real document),
+or **a contrast the viewer can't picture alone** (then/now, two real images side by side). Reject on sight:
+- anything that restates the spoken words (a stamp saying OBEDIENT while he says "obedient"; a list of the items he lists;
+  a card titled with his sentence) — captions already do that;
+- invented props standing in for an idea (fake time cards, fake tickets, fake dashboards with no real data);
+- logo rows of tools he names (monogram tiles look cheap) — show the real tool UI or nothing;
+- docking the speaker into a window for decoration — dock only while a proof element is on screen, ≤ ~6 s at a time.
+Retention gaps are fixed with a punch-in, a cut, or real b-roll — never a graphic. Expect most reels to have 1–3 graphics
+total. If in doubt, leave it out. Write in brief.md, per graphic: "the viewer learns ___ that the voice doesn't say".
 
 ## The meaning test (apply to EVERY graphic before adding it)
 Ask: *what does the viewer see or feel here that the voice alone doesn't give them?* If the honest answer is "nothing",

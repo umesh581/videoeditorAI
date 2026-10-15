@@ -18,6 +18,9 @@ const FAINT = 'rgba(10,10,10,0.14)';
 const MID = 'rgba(10,10,10,0.55)';
 
 const cue = (c: Cues, k: string, fallback = 0) => c[k] ?? fallback;
+// meaning-coded colours in bright mode (green = gain, red = limit/loss); the dark brand keeps lime for both
+const GOOD = (t: Theme) => (t.light ? t.colors.positive ?? t.colors.accent : t.colors.accent);
+const BAD = (t: Theme) => (t.light ? t.colors.negative : INK(t));
 
 /** Printer slot the slip feeds out of (first appearance only). */
 const Slot: React.FC<{o: number}> = ({o}) => {
@@ -52,7 +55,7 @@ const Header: React.FC<{right: React.ReactNode}> = ({right}) => {
 };
 
 /** Rubber stamp that slams onto the paper. */
-const Stamp: React.FC<{at: number; text: string; sub?: string; x: number; y: number; rot?: number}> = ({at, text, sub, x, y, rot = -11}) => {
+const Stamp: React.FC<{at: number; text: string; sub?: string; x: number; y: number; rot?: number; ink?: string}> = ({at, text, sub, x, y, rot = -11, ink}) => {
   const t = useTheme();
   const f = useCurrentFrame();
   if (f < at) return null;
@@ -61,7 +64,7 @@ const Stamp: React.FC<{at: number; text: string; sub?: string; x: number; y: num
   const shake = f < at + 10 ? Math.sin((f - at) * 2.2) * (1 - (f - at) / 10) * 6 : 0;
   return (
     <div style={{position: 'absolute', left: x, top: y, transform: `translate(${shake}px, ${shake * 0.6}px) rotate(${rot}deg) scale(${s})`,
-      opacity: o, whiteSpace: 'nowrap', border: `5px solid ${INK(t)}`, borderRadius: 10, padding: '10px 22px', color: INK(t), textAlign: 'center', mixBlendMode: 'multiply'}}>
+      opacity: o, whiteSpace: 'nowrap', border: `5px solid ${ink ?? INK(t)}`, borderRadius: 10, padding: '10px 22px', color: ink ?? INK(t), textAlign: 'center', mixBlendMode: 'multiply'}}>
       <div style={{fontFamily: t.display, fontWeight: 800, fontSize: 46, letterSpacing: '0.08em', lineHeight: 1}}>{text}</div>
       {sub && <div style={{fontFamily: t.body, fontWeight: 600, fontSize: 20, letterSpacing: '0.2em', marginTop: 6}}>{sub}</div>}
     </div>
@@ -122,7 +125,7 @@ const Hook: React.FC<{c: Cues}> = ({c}) => {
         <Label>Your ambition</Label>
         {/* runs straight off the paper and out of frame */}
         <div style={{width: 1000}}>
-          <Bar at={a} len={16} to={1} h={44} fill={t.colors.accent} outline ease={EXPO_IN} />
+          <Bar at={a} len={16} to={1} h={44} fill={GOOD(t)} outline ease={EXPO_IN} />
         </div>
       </div>
     </>
@@ -155,10 +158,10 @@ const Appraisal: React.FC<{c: Cues}> = ({c}) => {
           {GROWTH.map((_, i) => <span key={i} style={{flex: 1, textAlign: 'center', fontFamily: t.body, fontWeight: 600, fontSize: 20, color: MID}}>Y{i + 1}</span>)}
         </div>
         {/* the ceiling */}
-        <div style={{position: 'absolute', left: -20, right: -20, bottom: 40 + H - limitY, height: 0, borderTop: `4px dashed ${INK(t)}`,
+        <div style={{position: 'absolute', left: -20, right: -20, bottom: 40 + H - limitY, height: 0, borderTop: `4px dashed ${BAD(t)}`,
           clipPath: `inset(-10px ${(1 - ease(f, [lim, lim + 14], [0, 1])) * 100}% -10px 0)`}} />
         <div style={{position: 'absolute', right: -20, bottom: 40 + H - limitY + 12, opacity: ease(f, [lim + 8, lim + 14], [0, 1]),
-          background: t.colors.accent, color: t.colors.onAccent, fontFamily: t.body, fontWeight: 700, fontSize: 22, letterSpacing: '0.16em', padding: '6px 14px', borderRadius: 6}}>
+          background: t.light ? BAD(t) : t.colors.accent, color: t.light ? '#FFFFFF' : t.colors.onAccent, fontFamily: t.body, fontWeight: 700, fontSize: 22, letterSpacing: '0.16em', padding: '6px 14px', borderRadius: 6}}>
           LIMIT
         </div>
       </div>
@@ -189,7 +192,7 @@ const Goals: React.FC<{c: Cues}> = ({c}) => {
           <Bar at={mv + 6} len={40} to={0.24} fill="#B9B8B0" />
         </div>
       </div>
-      <Stamp at={st} text="TOO SLOW" sub="AT SALARY SPEED" x={318} y={96} rot={-8} />
+      <Stamp at={st} text="TOO SLOW" sub="AT SALARY SPEED" x={318} y={96} rot={-8} ink={t.light ? BAD(t) : undefined} />
     </>
   );
 };
@@ -214,7 +217,7 @@ const Second: React.FC<{c: Cues}> = ({c}) => {
       </div>
       <div style={{marginTop: 38, opacity: f >= s2 ? 1 : 0}}>
         <Line at={s2} label="+ Income 2 · Yours" bold marker={s2 + 10} />
-        <div style={{marginTop: 10}}><Bar at={s2 + 8} len={30} to={0.78} h={36} fill={t.colors.accent} outline /></div>
+        <div style={{marginTop: 10}}><Bar at={s2 + 8} len={30} to={0.78} h={36} fill={GOOD(t)} outline /></div>
       </div>
     </>
   );

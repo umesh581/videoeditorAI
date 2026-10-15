@@ -15,6 +15,8 @@ export interface ThemeSpec {
     onAccent: string; // text placed on the accent colour
     negative: string; // strike-throughs / "bad" side of comparisons
     paper?: string; // light card for contrast moments (video mode)
+    positive?: string; // right / gain / rich (bright mode: green)
+    money?: string; // ₹ amounts (bright mode: gold)
     onPaper?: string;
   };
   fonts: {display: string; body: string};
@@ -29,7 +31,11 @@ export interface ThemeSpec {
   canvas?: 'flat' | 'lit';
   placement?: 'organic' | 'meta-ad';
   dockStyle?: 'bottom' | 'top'; // top = podcast layout: speaker in the top half, canvas below // meta-ad: keep clear of the ad header (top 14%) and CTA/primary text (bottom 35%) // lit = soft light + grain behind graphics (video mode)
-  grain?: number; // QA only: drop scrims/dims so overlay masks contain just text + graphics // accent budget: emphasis = underline, only the spoken word gets solid accent
+  grain?: number;
+  light?: boolean; // bright mode: warm-white canvas, ink text, meaning-coded colours
+  dockRect?: {x: number; y: number; w: number; h: number; r: number}; // per-reel window, e.g. a round face-cam
+  dockFrame?: {x: number; y: number; zoom: number};
+  captionUndocked?: number; // full-screen beats: caption block top (0..1) — for close webcam shots where the face fills the lower half // what the docked window shows: source point (0..1) centred, zoomed // QA only: drop scrims/dims so overlay masks contain just text + graphics // accent budget: emphasis = underline, only the spoken word gets solid accent
 }
 
 export const DEFAULT_THEME: ThemeSpec = {

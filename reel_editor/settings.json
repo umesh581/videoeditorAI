@@ -1,0 +1,4 @@
+{
+  "_help": "export_dir: every finished (non-draft) render is also copied here. The project folder keeps its own copy so revisions keep working.",
+  "export_dir": "~/Desktop/Reels"
+}

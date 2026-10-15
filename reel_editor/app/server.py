@@ -320,6 +320,7 @@ def job_view(slug):
         job["qa"] = {"hard": len(rep["hard_failures"]) if rep else None, "frames": len(rep["frames"]) if rep else None,
                      "min": (sc or {}).get("min"), "mean": (sc or {}).get("mean"), "round": (sc or {}).get("round"),
                      "low": low[:6], "failures": (rep or {}).get("hard_failures", [])[:6]}
+    job["voice"] = json.loads(read("voice.json")) if (d / "voice.json").exists() else None
     job["queue"] = WORK.qsize()
     job["ahead"] = (PENDING.index(slug) + (1 if CURRENT["slug"] and CURRENT["slug"] != slug else 0)) if slug in PENDING else 0
     job["busyWith"] = CURRENT["slug"] if CURRENT["slug"] != slug else None

@@ -88,8 +88,8 @@ const Clip: React.FC<{b: RBroll; speakerSrc: string; docks?: [number, number][]}
           {b.label && (
             <div style={{marginBottom: 14}}>
               <Mask start={10} end={dur}>
-                <span style={{display: 'inline-flex', alignItems: 'center', gap: 10, fontFamily: t.body, fontWeight: t.weights.label, fontSize: 26, letterSpacing: '0.18em', textTransform: 'uppercase', color: t.colors.accent}}>
-                  <span style={{width: 10, height: 10, borderRadius: 5, background: t.colors.accent}} />
+                <span style={{display: 'inline-flex', alignItems: 'center', gap: 10, fontFamily: t.body, fontWeight: t.weights.label, fontSize: 26, letterSpacing: '0.18em', textTransform: 'uppercase', color: t.light ? t.colors.text : t.colors.accent}}>
+                  <span style={{width: 10, height: 10, borderRadius: 5, background: t.light ? t.colors.negative : t.colors.accent}} />
                   {b.label}
                 </span>
               </Mask>
@@ -99,6 +99,8 @@ const Clip: React.FC<{b: RBroll; speakerSrc: string; docks?: [number, number][]}
             background: t.colors.card, clipPath: `inset(${(1 - open) * 50}% 0 ${(1 - open) * 50}% 0 round ${t.radius.card}px)`}}>
             <Media b={b} dur={dur} />
           </div>
+          {/* licence credit (CC BY requires attribution) */}
+          {(b as {credit?: string}).credit && <div style={{marginTop: 8, fontFamily: t.body, fontWeight: 500, fontSize: 17, color: t.light ? 'rgba(17,17,17,0.55)' : 'rgba(255,255,255,0.55)'}}>{(b as {credit?: string}).credit}</div>}
         </div>
       </AbsoluteFill>
     );
@@ -122,7 +124,7 @@ const Clip: React.FC<{b: RBroll; speakerSrc: string; docks?: [number, number][]}
 
   // full / pip: the b-roll opens as a band from the centre and closes upward on exit
   const half = (1 - open) * 50;
-  const R = dockRect(t.placement, t.dockStyle); // while the speaker is docked, b-roll plays inside the same window
+  const R = dockRect(t.placement, t.dockStyle, t.dockRect); // while the speaker is docked, b-roll plays inside the same window
   const dockBox: React.CSSProperties = d > 0.01 ? {left: R.x * width * d, top: R.y * height * d, width: width * (1 - (1 - R.w) * d),
     height: height * (1 - (1 - R.h) * d), right: 'auto', bottom: 'auto', borderRadius: R.r * d, overflow: 'hidden'} : {};
   return (

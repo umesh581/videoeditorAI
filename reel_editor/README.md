@@ -46,3 +46,18 @@ Preview interactively: `cd remotion && npx remotion studio --props=../projects/<
 ## Requirements (already installed on this Mac)
 - ffmpeg, `whisper-cpp` (Homebrew), `models/ggml-small.bin`
 - Node 20, `remotion/` deps (`npm install`). Remotion is free for individuals and companies of ≤3 people; larger companies need a license.
+
+## Newer features (Oct 2026)
+- **Voice check + cleanup** (`voice.py`): grades the recording, removes background noise with RNNoise and notches mains
+  hum. It needs the model file once:
+  `curl -L -o reel_editor/models/rnnoise-cb.rnnn https://raw.githubusercontent.com/GregorR/rnnoise-models/master/conjoined-burgers-2018-08-28/cb.rnnn`
+- **Safe cuts:** every cut snaps to a gap in the waveform (10 ms envelope). The build refuses any cut that would clip a word.
+- **Real proof, not filler:**
+  - `reel.py news <slug> "claim"` fetches real headlines for `clipping` graphics, in newsprint or article style;
+  - `reel.py media-commons <slug> "Elon Musk"` fetches real, freely licensed photos, with the credit shown on screen.
+- **Style:** Bright Ledger is the default look (`brands/digital-entrepreneur.json`). The owner's style guide and Director's
+  review are in `brands/digital-entrepreneur_style.md`. `"styleRef": "varun-mayya"` turns on the documentary preset
+  (`brands/presets/`).
+- **Edit log:** `reel.py log` / `log-set` record every raw clip by content fingerprint (approved, delivered, held or
+  skipped). `new` refuses logged clips unless you pass `--redo`. The log itself (`edit_log.json`) stays local.
+- **Export:** finished reels are also copied to the folder in `settings.json` (`export_dir`).

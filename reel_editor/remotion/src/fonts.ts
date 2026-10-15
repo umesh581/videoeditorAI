@@ -2,6 +2,7 @@ import {loadFont as loadManrope} from '@remotion/google-fonts/Manrope';
 import {loadFont as loadInter} from '@remotion/google-fonts/Inter';
 import {loadFont as loadJakarta} from '@remotion/google-fonts/PlusJakartaSans';
 import {loadFont as loadAnekTelugu} from '@remotion/google-fonts/AnekTelugu';
+import {loadFont as loadNewsreader} from '@remotion/google-fonts/Newsreader';
 
 // Fonts a brand theme may name. Telugu glyphs always fall through to Anek Telugu, whose
 // geometry matches these sans families, so mixed Telugu/English lines read as one typeface.
@@ -14,3 +15,6 @@ const FAMILIES: Record<string, string> = {
 };
 
 export const fontStack = (name: string) => `${FAMILIES[name] ?? FAMILIES.Manrope}, ${TELUGU}`;
+
+// Newsprint serif — only for newspaper clippings (headlines quoted from real articles), never captions.
+export const NEWS_SERIF = `${loadNewsreader('normal', {weights: ['600', '700', '800'], subsets: ['latin']}).fontFamily}, Georgia, serif`;
